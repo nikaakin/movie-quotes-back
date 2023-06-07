@@ -23,6 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['controller' => AuthController::class], function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
-    Route::get('/email/verify', 'notice')->middleware('auth')->name('verification.notice');
-    Route::get('/email/verify/{id}/{hash}', 'verification')->middleware([ 'signed'])->name('verification.verify');
+    Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
 });

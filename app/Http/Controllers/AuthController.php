@@ -17,19 +17,13 @@ class AuthController extends Controller
         $validatedData = $request->validated();
         $validatedData['password'] = bcrypt($request->password);
         $user = User::create($validatedData);
-        auth()->login($user);
         event(new Registered($user));
-        return  response()->json(['message' => 'User created successfully', "user" => auth()->user()], 201);
+        return  response()->json(['message' => 'User created successfully'], 201);
     }
 
-    public function notice(): JsonResponse
-    {
-        return response()->json(['message' => 'Email verification sent'], 200);
-    }
 
     public function verification(AuthEmailVerificationRequest $request): RedirectResponse
     {
-
         $request->fulfill();
         auth()->logout();
         return redirect(env('FRONTEND_URL').'/news-feed');
