@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +25,6 @@ Route::group(['controller' => AuthController::class], function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
+    Route::get('/auth/google/redirect', 'googleRedirect');
+    Route::get('/auth/google/callback', 'googleCallback');
 });

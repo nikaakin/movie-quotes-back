@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
-
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -14,7 +13,7 @@ return new class () extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->boolean('is_google')->default(false);
+            $table->boolean('google_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

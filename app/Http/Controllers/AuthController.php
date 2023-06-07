@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -55,5 +56,23 @@ class AuthController extends Controller
         return response()->json(['message' => 'User logged out successfully'], 200);
     }
 
+    public function googleRedirect()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
 
+    public function googleCallback()
+    {
+        $googleUser =  Socialite::driver('google')->stateless()->user();
+        $user = User::updateOrCreate([
+            'google_id' => $googleUser->id,
+        ], [
+            'username' => $googleUser->name,
+            'email' => $googleUser->email,
+        ]);
+        return response()->json([
+            'message' => 'success',
+            'data' => $user
+        ]);
+    }
 }
