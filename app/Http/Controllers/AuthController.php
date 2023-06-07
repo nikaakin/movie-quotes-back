@@ -70,9 +70,11 @@ class AuthController extends Controller
             'username' => $googleUser->name,
             'email' => $googleUser->email,
         ]);
+        auth()->login($user);
+
         return response()->json([
-            'message' => 'success',
-            'data' => $user
+            'message' => 'user logged in',
+            'data' => auth()->user()
         ]);
     }
 }
