@@ -17,6 +17,10 @@ class AuthController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['password'] = bcrypt($request->password);
+        $user = User::where('email', $validatedData['email'])->first();
+        if($user) {
+            return response()->json(['message' => 'User already exists'], 409);
+        }
         $user = User::create($validatedData);
         auth()->login($user);
         event(new Registered($user));
@@ -27,15 +31,32 @@ class AuthController extends Controller
     public function verification(AuthEmailVerificationRequest $request): RedirectResponse
     {
         $request->fulfill();
-        auth()->logout();
         return redirect(env('FRONTEND_URL').'/news-feed');
+    }
+
+    public function resend(LoginRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        if (str_contains($data['username'], '@')) {
+            $user  = User::where('email', $data['username'])->first();
+            $data['email'] = $data['username'];
+            unset($data['username']);
+        } else {
+            $user  = User::where('username', $data['username'])->first();
+        }
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $user->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Verification link sent successfully'], 200);
     }
 
 
     public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $remember_me = $data['remember_me'] ?? false;
+        $remember_me = $data['remember'] ?? false;
         unset($data['remember']);
         if (str_contains($data['username'], '@')) {
             $data['email'] = $data['username'];
@@ -43,9 +64,13 @@ class AuthController extends Controller
         }
 
         if (auth()->attempt($data, $remember_me)) {
-            return redirect()->route('home');
+            if(!auth()->user()->hasVerifiedEmail()) {
+                auth()->logout();
+                return response()->json(['email_not_verified' => 'Please verify your email'], 401);
+            }
+            return response()->json(['message' => 'User logged in successfully'], 200);
         }
-        return response()->json(['message' => 'User logged in successfully'], 200);
+        return response()->json(['invalid_credentials' => __('auth.failed')], 401);
     }
 
     public function logout(): JsonResponse

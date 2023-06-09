@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,14 +16,19 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->zjson(['is_authenticated' => true], 200);
 });
 
+Route::get('/test', function () {
+    return response()->json(['message' => 'test'], 200);
+});
 
 Route::group(['controller' => AuthController::class], function () {
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
+    Route::post('/register', 'register')->name('register');
+    Route::post('/login', 'login')->name('login');
+    Route::get('/logout', 'logout')->name('logout');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
-    Route::get('/auth/google/redirect', 'googleRedirect');
-    Route::get('/auth/google/callback', 'googleCallback');
+    Route::post('/email/resend', 'resend')->name('verification.resend');
+    Route::get('/auth/google/redirect', 'googleRedirect')->name('google.redirect');
+    Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
 });

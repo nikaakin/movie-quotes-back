@@ -13,7 +13,7 @@ class LoginRequest extends FormRequest
         return [
             "username" => "required|min:3",
             "password"=> "required",
-            "remember_me" => "boolean"
+            "remember" => "boolean"
         ];
 
     }
