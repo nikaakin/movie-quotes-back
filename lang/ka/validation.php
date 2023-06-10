@@ -41,7 +41,7 @@ return [
     'email' => ':attribute ველი უნდა იყოს ვალიდური ელ.ფოსტა.',
     'ends_with' => 'The :attribute field must end with one of the following: :values.',
     'enum' => 'The selected :attribute is invalid.',
-    'exists' => 'The selected :attribute is invalid.',
+    'exists' => ':attribute ბაზაში არ არსებობს.',
     'file' => 'The :attribute field must be a file.',
     'filled' => 'The :attribute field must have a value.',
     'gt' => [
@@ -133,7 +133,7 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string' => 'The :attribute field must be a string.',
+    'string' => ':attribute ველი უნდა იყოს სტრინგი.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => ':attribute უკვე არსებობს.',
     'uploaded' => 'The :attribute failed to upload.',

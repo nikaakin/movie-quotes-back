@@ -6,25 +6,21 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class ForgotRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            "username" => "required|min:3",
-            "password"=> "required",
-            "remember" => "boolean"
+            'email'=> ['required', 'email', 'exists:users,email'],
         ];
-
     }
 
     public function messages(): array
     {
         return [
-            "username.required" => __('validation.required', ['attribute' => __('field_names.username')]),
-            "username.min" => __("validation.min.string", ["attribute" => __('field_names.username'), "min" => 3]),
-            "password.required" => __('validation.required', ['attribute' => __('field_names.password')]),
-            "remember_me.boolean" => __('validation.boolean', ['attribute' => __('field_names.remember_me')]),
+            'email.required' => __('validation.required', ['attribute' => __('field_names.email')]),
+            'email.email' => __('validation.email', ['attribute' => __('field_names.email')]),
+            'email.exists' => __('validation.exists', ['attribute' => __('field_names.email')])
         ];
     }
 
