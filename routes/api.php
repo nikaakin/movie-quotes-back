@@ -28,7 +28,8 @@ Route::group(['controller' => AuthController::class], function () {
     Route::post('/login', 'login')->name('login');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
-    Route::post('/email/resend', 'resend')->name('verification.resend');
+    Route::post('/forgot-password', 'forgot')->name('password.forgot');
+    Route::post('/reset-password', 'reset')->name('password.reset');
     Route::get('/auth/google/redirect', 'googleRedirect')->name('google.redirect');
     Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
 });
