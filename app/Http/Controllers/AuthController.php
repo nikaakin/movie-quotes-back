@@ -11,6 +11,7 @@ use App\Mail\ResetMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
@@ -66,7 +67,13 @@ class AuthController extends Controller
     public function forgot(ForgotRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $email  = $data['email'];
+        $user = User::where(['email'=> $email])->first();
+        if($user->google_id) {
+            return response()->json(['details'=>['email' => __('validation.google_email')]], 401);
+        }
         $token = Str::random(64);
+
 
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email'=> $data['email']],
@@ -75,8 +82,7 @@ class AuthController extends Controller
                 'created_at' => now(),
             ]
         );
-        $email  = $data['email'];
-        $user = User::where(['email'=> $email])->first();
+        $locale = app()->getLocale();
         Mail::to($user)
         ->send(
             new ResetMail(
@@ -86,12 +92,13 @@ class AuthController extends Controller
                 __('mail.hint'),
                 __('mail.any_problems'),
                 __('mail.regards'),
-                env('FRONTEND_URL') ."/?token= $token&email=$email",
+                env('FRONTEND_URL') ."/$locale/?token=$token&email=$email",
             )
         );
 
         return response()->json(['message' => 'User logged out successfully'], 200);
     }
+
 
     public function reset(ResetRequest $request): JsonResponse
     {
@@ -117,7 +124,7 @@ class AuthController extends Controller
     }
 
 
-    public function googleRedirect(): Socialite
+    public function googleRedirect(): RedirectResponse
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
@@ -125,17 +132,32 @@ class AuthController extends Controller
     public function googleCallback(): JsonResponse
     {
         $googleUser =  Socialite::driver('google')->stateless()->user();
-        $user = User::updateOrCreate([
-            'google_id' => $googleUser->id,
-        ], [
-            'username' => $googleUser->name,
-            'email' => $googleUser->email,
-        ]);
+        $google_id = $googleUser->getId();
+        $user = User::where('google_id', $google_id)->first();
+        if (!$user) {
+            $user =User::create([
+                'email' => $googleUser->getEmail(),
+                'username' => $googleUser->name ?? $googleUser->getNickname(),
+                'password' => null,
+            ]);
+
+            $user->google_id = $google_id;
+            $user->save();
+
+        } else {
+            $user->update([
+              'email' => $googleUser->getEmail(),
+              'username' => $googleUser->name ?? $googleUser->getNickname(),
+              'google_id' => $google_id,
+              'password' => null,
+            ]);
+        }
+
         auth()->login($user);
 
         return response()->json([
             'message' => 'user logged in',
-            'data' => auth()->user()
+            'data' => auth()->user(),
         ]);
     }
 }

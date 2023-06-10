@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->zjson(['is_authenticated' => true], 200);
+    return response()->json(['is_authenticated' => true], 200);
 });
 
 Route::get('/test', function () {
