@@ -53,7 +53,7 @@ class AuthController extends Controller
             }
             return response()->json(['message' => 'User logged in successfully'], 200);
         }
-        return response()->json(['invalid_credentials' => __('auth.failed')], 401);
+        return response()->json(['password' => __('auth.failed')], 401);
     }
 
     public function logout(): JsonResponse
@@ -133,25 +133,27 @@ class AuthController extends Controller
     {
         $googleUser =  Socialite::driver('google')->stateless()->user();
         $google_id = $googleUser->getId();
-        $user = User::where('google_id', $google_id)->first();
-        if (!$user) {
-            $user =User::create([
+
+        $user =User::where(['email'=> $googleUser->getEmail()])->first();
+
+        if($user && $user->google_id !== $google_id) {
+            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.email')])]], 401);
+        }
+        $user =User::where(['username'=> $googleUser->name ?? $googleUser->getNickname()])->first();
+
+        if($user && $user->google_id !== $google_id) {
+            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.username')])]], 401);
+        }
+
+        $user = User::updateOrCreate(
+            ['google_id' => $google_id],
+            [
+                'google_id' => $google_id,
                 'email' => $googleUser->getEmail(),
                 'username' => $googleUser->name ?? $googleUser->getNickname(),
                 'password' => null,
-            ]);
-
-            $user->google_id = $google_id;
-            $user->save();
-
-        } else {
-            $user->update([
-              'email' => $googleUser->getEmail(),
-              'username' => $googleUser->name ?? $googleUser->getNickname(),
-              'google_id' => $google_id,
-              'password' => null,
-            ]);
-        }
+            ]
+        );
 
         auth()->login($user);
 

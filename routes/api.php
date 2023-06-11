@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json(['is_authenticated' => true], 200);
+    if(!auth()->user()->email_verified_at && !auth()->user()->google_id) {
+        return response()->json(['email_not_verified' => 'Please verify your email'], 401);
+    }
+
+    return response()->json(['is_authenticated' => true, 'user'=> auth()->user()], 200);
 });
 
 Route::get('/test', function () {
