@@ -7,4 +7,7 @@ return [
     "hint"=> "თუ ღილაკი არ მუშაობს ცადეთ დაბლა მოცემული ლინკის ბრაუზერში კოპირება:",
     "any_problems"=>'პრობლემის შემთხვევაში დაგვიკავშირდით: support@moviequotes.ge',
     "regards"=>'MovieQuotes ჯგუფი',
+    "recover_password_button"=>'პაროლის აღდგენა',
+    "reset_password_button"=>'პაროლის აღდგენა',
+    "reset_password_hint"=>'თუ თქვენ არ მოითხოვეთ პაროლის აღდგენა, არ გადახვიდეთ ლინკზე.',
 ];
