@@ -29,14 +29,6 @@ class AuthController extends Controller
         return  response()->json(['message' => 'User created successfully'], 201);
     }
 
-    public function edit(RegisterRequest $request): JsonResponse
-    {
-        $data = $request->validated();
-        $data['password'] = bcrypt($request->password);
-        $user = User::updateOrCreate(['email'=> $data['email']], $data);
-        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
-    }
-
 
     public function verification(AuthEmailVerificationRequest $request): JsonResponse
     {
