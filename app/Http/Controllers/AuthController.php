@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\auth\EditRequest;
 use App\Http\Requests\auth\EmailVerificationRequest as AuthEmailVerificationRequest;
 use App\Http\Requests\auth\ForgotRequest;
 use App\Http\Requests\auth\LoginRequest;
@@ -29,7 +30,7 @@ class AuthController extends Controller
         return  response()->json(['message' => 'User created successfully'], 201);
     }
 
-    public function edit(RegisterRequest $request): JsonResponse
+    public function edit(EditRequest $request): JsonResponse
     {
         $data = $request->validated();
         $data['password'] = bcrypt($request->password);
