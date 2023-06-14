@@ -33,7 +33,11 @@ class AuthController extends Controller
     public function edit(EditRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['password'] = bcrypt($request->password);
+        if($data['google_id']) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($request->password);
+        }
         $user = User::updateOrCreate(['email'=> $data['email']], $data);
         return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
     }

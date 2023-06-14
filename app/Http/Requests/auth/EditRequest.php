@@ -13,7 +13,8 @@ class EditRequest extends FormRequest
         return [
             'username' => 'min:3|max:15|regex:/^[a-z0-9]+$/|unique:users,username',
             'email' => 'email|required|exists:users,email',
-            'password' => 'min:8|max:15|regex:/^[a-z0-9]+$/'
+            'password' => 'min:8|max:15|regex:/^[a-z0-9]+$/',
+            "google_id"=>''
         ];
     }
 
