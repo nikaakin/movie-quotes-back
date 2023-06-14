@@ -21,12 +21,20 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-        $validatedData['password'] = bcrypt($request->password);
-        $user = User::create($validatedData);
+        $data = $request->validated();
+        $data['password'] = bcrypt($request->password);
+        $user = User::create($data);
         auth()->login($user);
         event(new Registered($user));
         return  response()->json(['message' => 'User created successfully'], 201);
+    }
+
+    public function edit(RegisterRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $data['password'] = bcrypt($request->password);
+        $user = User::updateOrCreate(['email'=> $data['email']], $data);
+        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
     }
 
 

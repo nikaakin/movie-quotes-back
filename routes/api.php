@@ -29,6 +29,7 @@ Route::get('/test', function () {
 
 Route::group(['controller' => AuthController::class], function () {
     Route::post('/register', 'register')->name('register');
+    Route::patch('/edit', 'edit')->name('edit');
     Route::post('/login', 'login')->name('login');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
