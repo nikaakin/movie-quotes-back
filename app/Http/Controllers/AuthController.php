@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\auth\EditRequest;
 use App\Http\Requests\auth\EmailVerificationRequest as AuthEmailVerificationRequest;
 use App\Http\Requests\auth\ForgotRequest;
 use App\Http\Requests\auth\LoginRequest;
@@ -27,6 +28,19 @@ class AuthController extends Controller
         auth()->login($user);
         event(new Registered($user));
         return  response()->json(['message' => 'User created successfully'], 201);
+    }
+
+
+    public function edit(EditRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        if($data['google_id']) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($request->password);
+        }
+        $user = User::updateOrCreate(['email'=> $data['email']], $data);
+        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
     }
 
 
