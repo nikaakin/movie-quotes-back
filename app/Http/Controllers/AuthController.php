@@ -30,6 +30,7 @@ class AuthController extends Controller
         return  response()->json(['message' => 'User created successfully'], 201);
     }
 
+
     public function edit(EditRequest $request): JsonResponse
     {
         $data = $request->validated();

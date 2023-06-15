@@ -18,5 +18,4 @@ jobs:
             cd apps
             cd nika-cuckiridze-covid-epic-movie-quotes-back
             git pull            
-            npm run build
           EOF
