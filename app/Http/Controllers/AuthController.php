@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 
@@ -37,7 +38,12 @@ class AuthController extends Controller
         if($data['google_id']) {
             unset($data['password']);
         } else {
-            $data['password'] = bcrypt($request->password);
+            isset($data['password']) && $data['password'] = bcrypt($request->password);
+        }
+        if($data['image']) {
+            $imageName = Str::random(10).'.'.'png';
+            Storage::disk('public')->put($imageName, base64_decode($data['image']));
+            $data['image'] = env('APP_URL') . '/storage/'.$imageName;
         }
         $user = User::updateOrCreate(['email'=> $data['email']], $data);
         return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
@@ -65,7 +71,7 @@ class AuthController extends Controller
                 auth()->user()->sendEmailVerificationNotification();
                 return response()->json(['email_not_verified' => 'Please verify your email'], 401);
             }
-            return response()->json(['message' => 'User logged in successfully'], 200);
+            return response()->json(['message' => 'User logged in successfully', "user"=> auth()->user()], 200);
         }
         return response()->json(['password' => __('auth.failed')], 401);
     }
@@ -166,6 +172,7 @@ class AuthController extends Controller
                 'email' => $googleUser->getEmail(),
                 'username' => $googleUser->name ?? $googleUser->getNickname(),
                 'password' => null,
+                'image' => $googleUser->getAvatar(),
             ]
         );
 

@@ -8,13 +8,23 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class EditRequest extends FormRequest
 {
+    public function prepareForValidation()
+    {
+        $image = str_replace('data:image/png;base64,', '', $this->image);
+        $image = str_replace(' ', '+', $image);
+        $this->merge([
+            'image' => $image,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
             'username' => 'min:3|max:15|regex:/^[a-z0-9]+$/|unique:users,username',
             'email' => 'email|required|exists:users,email',
             'password' => 'min:8|max:15|regex:/^[a-z0-9]+$/',
-            "google_id"=>''
+            "google_id"=>'',
+            'image'=>'string'
         ];
     }
 
@@ -31,6 +41,7 @@ class EditRequest extends FormRequest
             'password.min' => __('validation.min.string', ['attribute' => __('field_names.password'), 'min' => 8]),
             'password.max' => __('validation.max.string', ['attribute' => __('field_names.password'), 'max' => 15]),
             'password.regex' => __('validation.regex', ['attribute' => __('field_names.password')]),
+            'image.image' => __('validation.image', ['attribute' => __('field_names.image')]),
         ];
     }
 
