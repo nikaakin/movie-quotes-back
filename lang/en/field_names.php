@@ -5,5 +5,6 @@ return [
     "username" => "username",
     "remember_me" => "remember me",
     "email" => "email",
-    "token" => "token"
+    "token" => "token",
+    "image" => "image",
 ];
