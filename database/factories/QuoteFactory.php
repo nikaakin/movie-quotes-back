@@ -14,7 +14,7 @@ class QuoteFactory extends Factory
                 'en' => $this->faker->unique()->sentence(2),
                 'ka' => $this->faker->unique()->sentence(2),
             ],
-            'image' => 'assets/images/quote-image.png',
+            'image' => env('FRONTEND_URL') . '/assets/images/quote-image.png',
             'movie_id' => Movie::first()->id,
         ];
     }

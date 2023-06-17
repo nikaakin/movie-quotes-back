@@ -14,7 +14,7 @@ return new class () extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('google_id')->nullable();
-            $table->string('image')->default('assets/images/avatar.png');
+            $table->string('image')->default(env('FRONTEND_URL') . '/assets/images/avatar.png');
             $table->rememberToken();
             $table->timestamps();
         });
