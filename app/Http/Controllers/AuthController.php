@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\auth\EditRequest;
 use App\Http\Requests\auth\EmailVerificationRequest as AuthEmailVerificationRequest;
 use App\Http\Requests\auth\ForgotRequest;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\ResetRequest;
+use App\Http\Requests\auth\UpdateRequest;
 use App\Mail\ResetMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -32,7 +32,7 @@ class AuthController extends Controller
     }
 
 
-    public function edit(EditRequest $request): JsonResponse
+    public function update(UpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
         if($data['google_id']) {
@@ -141,6 +141,15 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password changed succefully'], 200);
 
+    }
+
+    public function isAuthenticated(): JsonResponse
+    {
+        if(!auth()->user()->email_verified_at && !auth()->user()->google_id) {
+            return response()->json(['email_not_verified' => 'Please verify your email'], 401);
+        }
+
+        return response()->json(['is_authenticated' => true, 'user'=> auth()->user()], 200);
     }
 
 

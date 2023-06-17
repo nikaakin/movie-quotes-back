@@ -3,20 +3,45 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Genre;
+use App\Models\Movie;
+use App\Models\Notification;
+use App\Models\Quote;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        collect(config('genres.genres'))->map(function ($genre) {
+            Genre::create([
+                'genre' => $genre,
+            ]);
+        });
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+                    'username' => 'nika',
+                    'email' => 'nika@nika.com',
+                    'password'=> bcrypt('nikanika'),
+                ]);
+
+        Movie::factory(20)->create();
+        Quote::factory(20)->create();
+        Notification::factory(10)->create([
+            'isLike'=> false
+        ]);
+        Notification::factory(10)->create([
+            'comment'=> null,
+            'isLike'=> true
+        ]);
+
+        Movie::all()->each(function ($movie) {
+            $movie->genres()->attach(
+                Genre::inRandomOrder()->first()
+            );
+        });
+
     }
 }
