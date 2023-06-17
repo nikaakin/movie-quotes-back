@@ -9,6 +9,10 @@ class Quote extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id'
+    ];
+
     protected $casts = [
         'quote' => 'array'
     ];

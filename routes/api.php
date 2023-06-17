@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MovieController;
+use App\Http\Controllers\QuoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,21 +17,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    if(!auth()->user()->email_verified_at && !auth()->user()->google_id) {
-        return response()->json(['email_not_verified' => 'Please verify your email'], 401);
-    }
 
-    return response()->json(['is_authenticated' => true, 'user'=> auth()->user()], 200);
-});
-
-Route::get('/test', function () {
-    return response()->json(['message' => 'test'], 200);
-});
 
 Route::group(['controller' => AuthController::class], function () {
+    Route::get('/user', 'isAuthenticated')->middleware('auth:sanctum');
     Route::post('/register', 'register')->name('register');
-    Route::patch('/edit', 'edit')->name('edit');
+    Route::patch('/update', 'update')->name('update');
     Route::post('/login', 'login')->name('login');
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
@@ -37,4 +30,20 @@ Route::group(['controller' => AuthController::class], function () {
     Route::post('/reset-password', 'reset')->name('password.reset');
     Route::get('/auth/google/redirect', 'googleRedirect')->name('google.redirect');
     Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
+});
+
+Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'movies'], function () {
+
+    Route::group(['controller' => MovieController::class], function () {
+        Route::get('/{skip}', 'index')->name('movies.index');
+        Route::post('/store', 'store')->name('movies.store');
+        Route::patch('/update/{movie}', 'update')->name('movies.update');
+        Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
+    });
+
+    Route::group(['controller' => QuoteController::class, 'prefix' => 'quotes'], function () {
+        Route::post('/store', 'store')->name('quotes.store');
+        Route::patch('/update/{quote}', 'update')->name('quotes.update');
+        Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
+    });
 });
