@@ -41,7 +41,10 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'movies'], function 
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
     });
 
+    Route::get('/{movie}/quotes/{skip}', 'quotesOfMovie')->name('movies.quotes.index');
+
     Route::group(['controller' => QuoteController::class, 'prefix' => 'quotes'], function () {
+        Route::get('/{skip}', 'index')->name('quotes.index');
         Route::post('/store', 'store')->name('quotes.store');
         Route::patch('/update/{quote}', 'update')->name('quotes.update');
         Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
