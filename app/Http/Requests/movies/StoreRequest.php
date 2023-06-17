@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\movies;
 
+use App\Models\Movie;
+use App\Rules\UniqueJson;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -20,8 +23,8 @@ class StoreRequest extends FormRequest
         public function rules(): array
         {
             return [
-                'title.en' => "required|unique:movies,title->en",
-                'title.ka' => "required|unique:movies,title->ka",
+                'title.en' => ["required" ,  new UniqueJson('en', 'movies', 'title')],
+                'title.ka' => ["required" , new UniqueJson('ka', 'movies', 'title')],
                 'director.en' => "required",
                 'director.ka' => "required",
                 'description.en' => "required",
