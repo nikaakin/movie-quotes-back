@@ -32,7 +32,7 @@ Route::group(['controller' => AuthController::class], function () {
     Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
 });
 
-Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'movies'], function () {
+Route::group(["middleware" => "auth:sanctum", 'prefix' => 'movies'], function () {
 
     Route::group(['controller' => MovieController::class], function () {
         Route::get('/{skip}', 'index')->name('movies.index');
@@ -42,7 +42,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'movies'], function 
     });
 
 
-    Route::group(['controller' => QuoteController::class], function () {
+    Route::group(["middleware" => "auth:sanctum",'controller' => QuoteController::class], function () {
         Route::get('/{movie}/quotes/{skip}', 'quotesOfMovie')->name('movies.quotes.index');
         Route::group(['prefix' => 'quotes'], function () {
             Route::get('/{skip}', 'index')->name('quotes.index');
