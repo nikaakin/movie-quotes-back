@@ -23,7 +23,7 @@ class MovieFactory extends Factory
                 'ka' => $this->faker->name(),
             ],
             'year' => $this->faker->year(),
-            'image' => 'assets/images/movie-image.png',
+            'image' => env('FRONTEND_URL') . '/assets/images/movie-image.png',
             'user_id' => User::where(['email'=> 'nika@nika.com'])->first()->id,
         ];
     }

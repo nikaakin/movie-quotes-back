@@ -71,7 +71,7 @@ class AuthController extends Controller
                 auth()->user()->sendEmailVerificationNotification();
                 return response()->json(['email_not_verified' => 'Please verify your email'], 401);
             }
-            return response()->json(['message' => 'User logged in successfully', "user"=> auth()->user()], 200);
+            return response()->json(['message' => 'User logged in successfully', "user"=> auth()->user(), ], 200);
         }
         return response()->json(['password' => __('auth.failed')], 401);
     }
@@ -189,7 +189,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'user logged in',
-            'data' => auth()->user(),
+            'user' => auth()->user(),
         ]);
     }
 }
