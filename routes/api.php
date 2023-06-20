@@ -31,9 +31,9 @@ Route::group(['controller' => AuthController::class], function () {
     Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
 });
 
-Route::group(["middleware" => "auth:sanctum", 'prefix' => 'movies'], function () {
+Route::group([ 'prefix' => 'movies'], function () {
 
-    Route::group(['controller' => MovieController::class], function () {
+    Route::group(["middleware" => "auth:sanctum",'controller' => MovieController::class], function () {
         Route::get('/{skip}', 'index')->name('movies.index');
         Route::post('/store', 'store')->name('movies.store');
         Route::patch('/update/{movie}', 'update')->name('movies.update');
@@ -41,13 +41,15 @@ Route::group(["middleware" => "auth:sanctum", 'prefix' => 'movies'], function ()
     });
 
 
-    Route::group(["middleware" => "auth:sanctum",'controller' => QuoteController::class], function () {
+    Route::group(['controller' => QuoteController::class], function () {
         Route::get('/{movie}/quotes/{skip}', 'quotesOfMovie')->name('movies.quotes.index');
         Route::group(['prefix' => 'quotes'], function () {
             Route::get('/{skip}', 'index')->name('quotes.index');
-            Route::post('/store', 'store')->name('quotes.store');
-            Route::patch('/update/{quote}', 'update')->name('quotes.update');
-            Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
+            Route::group([ "middleware" => "auth:sanctum"], function () {
+                Route::post('/store', 'store')->name('quotes.store');
+                Route::patch('/update/{quote}', 'update')->name('quotes.update');
+                Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
+            });
         });
     });
 });
