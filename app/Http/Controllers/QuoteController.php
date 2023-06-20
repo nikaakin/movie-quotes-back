@@ -12,7 +12,11 @@ class QuoteController extends Controller
 {
     public function index(int $skip): JsonResponse
     {
-        $quotes = Quote::skip($skip)->take(10)->get();
+        $quotes = Quote::withCount(['notifications' => function ($notification) {
+            $notification->where('isLike', 1);
+        }])->with(['notifications.user', 'notifications'=> function ($notification) {
+            $notification->where('isLike', 0);
+        }])->skip($skip)->take(10)->get()->sortByDesc('created_at')->values();
 
         return response()->json([
             'quotes' => $quotes,

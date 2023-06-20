@@ -22,4 +22,13 @@ class Quote extends Model
         return $this->belongsTo(Movie::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function users()
+    {
+        return $this->hasManyThrough(User::class, Notification::class);
+    }
 }
