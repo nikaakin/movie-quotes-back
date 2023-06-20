@@ -27,8 +27,8 @@ class Quote extends Model
         return $this->hasMany(Notification::class);
     }
 
-    public function users()
+    public function user()
     {
-        return $this->hasManyThrough(User::class, Notification::class);
+        return $this->belongsTo(User::class);
     }
 }

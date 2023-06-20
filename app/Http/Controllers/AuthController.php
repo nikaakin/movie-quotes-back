@@ -71,7 +71,7 @@ class AuthController extends Controller
                 auth()->user()->sendEmailVerificationNotification();
                 return response()->json(['email_not_verified' => 'Please verify your email'], 401);
             }
-            $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id']);
+            $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id'])->first();
             return response()->json(['message' => 'User logged in successfully', "user"=> $user, ], 200);
         }
         return response()->json(['password' => __('auth.failed')], 401);
@@ -150,7 +150,7 @@ class AuthController extends Controller
             return response()->json(['email_not_verified' => 'Please verify your email'], 401);
         }
 
-        $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id']);
+        $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id'])->first();
         return response()->json(['is_authenticated' => true, 'user'=> $user], 200);
     }
 
@@ -188,7 +188,7 @@ class AuthController extends Controller
         );
 
         auth()->login($user);
-        $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id']);
+        $user = auth()->user()->with('movies')->get()->makeVisible(['email_verified_at', 'google_id'])->first();
         return response()->json([
             'message' => 'user logged in',
             'user' => $user,

@@ -12,7 +12,7 @@ class NotificationFactory extends Factory
     {
         return [
             'isLike' => $this->faker->boolean(),
-            'comment' => $this->faker->paragraph(3),
+            'comment' => $this->faker->paragraph(1),
             'user_id' =>  User::where(['email'=> 'nika@nika.com'])->first()->id,
             'quote_id'=> Quote::first()->id,
         ];
