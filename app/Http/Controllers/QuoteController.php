@@ -13,11 +13,19 @@ class QuoteController extends Controller
     public function index(int $skip): JsonResponse
     {
         $quotes = Quote::with('notifications.user')->skip($skip)->take(10)->get()->sortByDesc('created_at')->values();
-        // $user = $quotes->notifications();
+        foreach ($quotes as $quote) {
+            $likes = 0;
+            foreach ($quote->notifications as $key => $notification) {
+                if($notification->isLike === 1) {
+                    $likes++;
+                    unset($quote->notifications[$key]);
+                }
+            }
+            $quote->likes = $likes;
+        }
+
         return response()->json([
             'quotes' => $quotes,
-
-            // 'user' => $user
         ], 200);
     }
 
