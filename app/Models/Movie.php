@@ -19,6 +19,12 @@ class Movie extends Model
         'director' => 'array'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'user_id'
+    ];
+
     public function quotes()
     {
         return $this->hasMany(Quote::class);

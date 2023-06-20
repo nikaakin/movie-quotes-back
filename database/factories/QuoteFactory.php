@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Movie;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuoteFactory extends Factory
@@ -16,6 +17,7 @@ class QuoteFactory extends Factory
             ],
             'image' => env('FRONTEND_URL') . '/assets/images/quote-image.png',
             'movie_id' => Movie::first()->id,
+            'user_id' => User::first()->id,
         ];
     }
 }

@@ -11,12 +11,12 @@ class MovieFactory extends Factory
     {
         return [
             'title' => [
-                'en' => $this->faker->unique()->sentence(2),
-                'ka' => $this->faker->unique()->sentence(2),
+                'en' => $this->faker->unique()->sentence(1),
+                'ka' => $this->faker->unique()->sentence(1),
             ],
             'description' => [
-                'en' => $this->faker->paragraph(3),
-                'ka' => $this->faker->paragraph(3),
+                'en' => $this->faker->paragraph(1),
+                'ka' => $this->faker->paragraph(1),
             ],
             'director'  => [
                 'en' => $this->faker->name(),
