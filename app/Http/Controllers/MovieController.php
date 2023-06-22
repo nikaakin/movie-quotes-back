@@ -9,12 +9,18 @@ use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
 {
-    public function index(int $skip): JsonResponse
+    public function index(Movie $movie): JsonResponse
     {
-        $movies = Movie::skip($skip)->take(10)->get();
+        $movie = $movie->with(['quotes'=>function ($quote) {
+            $quote->withCount(['notifications' => function ($notification) {
+                $notification->where('isLike', 1);
+            }])->with(['notifications.user', 'notifications'=> function ($notification) {
+                $notification->where('isLike', 0);
+            }]);
+        }])->get();
 
         return response()->json([
-            'movies' => $movies,
+            'movies' => $movie,
         ], 200);
     }
 
