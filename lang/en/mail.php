@@ -10,4 +10,7 @@ return [
     "recover_password_button"=>'Recover password',
     "reset_password_button"=>'Reset password',
     "reset_password_hint"=>'If you did not request a password reset, no further action is required.',
+    "reset_email_update_button"=>'Update email',
+    "reset_email_update_hint"=>'If you did not request an email change, no further action is required.',
+
 ];
