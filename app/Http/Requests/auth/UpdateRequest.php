@@ -21,6 +21,8 @@ class UpdateRequest extends FormRequest
     {
         return [
             'username' => 'min:3|max:15|regex:/^[a-z0-9]+$/|unique:users,username',
+            'newEmail' => 'email|unique:users,email',
+            'verifiedEmail' => 'email|unique:users,email',
             'email' => 'email|required|exists:users,email',
             'password' => 'min:8|max:15|regex:/^[a-z0-9]+$/',
             "google_id"=>'',
@@ -35,6 +37,10 @@ class UpdateRequest extends FormRequest
             'username.max' => __('validation.max.string', ['attribute' => __('field_names.username'), 'max' => 15]),
             'username.regex' => __('validation.regex', ['attribute' => __('field_names.username')]),
             'username.unique' => __('validation.unique', ['attribute' => __('field_names.username')]),
+            'newEmail.email' => __('validation.email', ['attribute' => __('field_names.email')]),
+            'newEmail.unique' => __('validation.unique', ['attribute' => __('field_names.email')]),
+            'verifiedEmail.email' => __('validation.email', ['attribute' => __('field_names.email')]),
+            'verifiedEmail.unique' => __('validation.unique', ['attribute' => __('field_names.email')]),
             'email.required' => __('validation.required', ['attribute' => __('field_names.email')]),
             'email.email' => __('validation.email', ['attribute' => __('field_names.email')]),
             'email.exists' => __('validation.exists', ['attribute' => __('field_names.email')]),

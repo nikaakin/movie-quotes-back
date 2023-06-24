@@ -35,18 +35,43 @@ class AuthController extends Controller
     public function update(UpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $email = $data['email'];
+
+        if(isset($data['verifiedEmail'])) {
+            $user = User::where('email', $email)->update(['email'=> $data['verifiedEmail']]);
+            return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
+        }
+
         if($data['google_id']) {
             unset($data['password']);
+            unset($data['newEmail']);
         } else {
             isset($data['password']) && $data['password'] = bcrypt($request->password);
+
+            if($data['newEmail']) {
+                $user = User::firstWhere('email', $email);
+                $newEmail = $data['newEmail'];
+                unset($data['newEmail']);
+                $locale = app()->getLocale();
+                Mail::to($email)->send(new ResetMail(
+                    __('mail.greeting', ["name"=> $user->username]),
+                    __('mail.reset_email_update_hint'),
+                    __('mail.reset_email_update_button'),
+                    __('mail.hint'),
+                    __('mail.any_problems'),
+                    __('mail.regards'),
+                    env('FRONTEND_URL') ."/$locale/news-feed/profile/?email=$email&newEmail=$newEmail",
+                ));
+            }
         }
+
         if($data['image']) {
             $imageName = Str::random(10).'.'.'png';
             Storage::disk('public')->put($imageName, base64_decode($data['image']));
             $data['image'] = env('APP_URL') . '/storage/'.$imageName;
         }
-        $user = User::updateOrCreate(['email'=> $data['email']], $data);
-        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 200);
+        $user = User::updateOrCreate(['email'=> $email], $data);
+        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
     }
 
 

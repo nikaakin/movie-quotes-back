@@ -10,4 +10,6 @@ return [
     "recover_password_button"=>'პაროლის აღდგენა',
     "reset_password_button"=>'პაროლის აღდგენა',
     "reset_password_hint"=>'თუ თქვენ არ მოითხოვეთ პაროლის აღდგენა, არ გადახვიდეთ ლინკზე.',
+    "reset_email_update_button"=>'ელ.ფოსტის აღდგენა',
+    "reset_email_update_hint"=>'თუ თქვენ არ მოითხოვეთ ელ.ფოსტის შეცვლა, არ გადახვიდეთ ლინკზე.',
 ];
