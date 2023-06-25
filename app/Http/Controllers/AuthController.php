@@ -38,7 +38,7 @@ class AuthController extends Controller
         $email = $data['email'];
 
         if(isset($data['verifiedEmail'])) {
-            $user = User::where('email', $email)->update(['email'=> $data['verifiedEmail']]);
+            $user = User::firstWhere('email', $email)->update(['email'=> $data['verifiedEmail']]);
             return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
         }
 
@@ -48,7 +48,7 @@ class AuthController extends Controller
         } else {
             isset($data['password']) && $data['password'] = bcrypt($request->password);
 
-            if($data['newEmail']) {
+            if(isset($data['newEmail'])) {
                 $user = User::firstWhere('email', $email);
                 $newEmail = $data['newEmail'];
                 unset($data['newEmail']);
@@ -69,6 +69,8 @@ class AuthController extends Controller
             $imageName = Str::random(10).'.'.'png';
             Storage::disk('public')->put($imageName, base64_decode($data['image']));
             $data['image'] = env('APP_URL') . '/storage/'.$imageName;
+        } else {
+            unset($data['image']);
         }
         $user = User::updateOrCreate(['email'=> $email], $data);
         return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
@@ -96,10 +98,7 @@ class AuthController extends Controller
                 auth()->user()->sendEmailVerificationNotification();
                 return response()->json(['email_not_verified' => 'Please verify your email'], 401);
             }
-            $user = auth()->user()->with(['movies'=> function ($movie) {
-                $movie->withCount('quotes');
-            }])->get()->makeVisible(['email_verified_at', 'google_id'])->first();
-            return response()->json(['message' => 'User logged in successfully', "user"=> $user, ], 200);
+            return response()->json(['message' => 'User logged in successfully', "user"=> auth()->user(), ], 200);
         }
         return response()->json(['password' => __('auth.failed')], 401);
     }
@@ -116,7 +115,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $email  = $data['email'];
-        $user = User::where(['email'=> $email])->first();
+        $user = User::firstWhere('email', $email);
         if($user->google_id) {
             return response()->json(['details'=>['email' => __('validation.google_email')]], 401);
         }
@@ -177,9 +176,7 @@ class AuthController extends Controller
             return response()->json(['email_not_verified' => 'Please verify your email'], 401);
         }
 
-        $user = auth()->user()->with(['movies'=> function ($movie) {
-            $movie->withCount('quotes');
-        }])->get()->makeVisible(['email_verified_at', 'google_id'])->first();
+        $user = auth()->user();
         return response()->json(['is_authenticated' => true, 'user'=> $user], 200);
     }
 
@@ -217,9 +214,7 @@ class AuthController extends Controller
         );
 
         auth()->login($user);
-        $user = auth()->user()->with(['movies'=> function ($movie) {
-            $movie->withCount('quotes');
-        }])->get()->makeVisible(['email_verified_at', 'google_id'])->first();
+        $user = auth()->user();
         return response()->json([
             'message' => 'user logged in',
             'user' => $user,
