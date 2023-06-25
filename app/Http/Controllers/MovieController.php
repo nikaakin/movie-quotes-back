@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\movies\UpdateRequest;
 use App\Http\Requests\movies\StoreRequest;
 use App\Models\Movie;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
@@ -17,10 +18,28 @@ class MovieController extends Controller
             }])->with(['notifications.user', 'notifications'=> function ($notification) {
                 $notification->where('isLike', 0);
             }]);
-        }])->get();
+        }])->firstWhere($movie);
 
         return response()->json([
             'movies' => $movie,
+        ], 200);
+    }
+
+    public function moviesOfUser(User $user): JsonResponse
+    {
+
+        $movies = $user->with(['movies'=>function ($movie) {
+            $movie->with(['genres','quotes'=>function ($quote) {
+                $quote->withCount(['notifications' => function ($notification) {
+                    $notification->where('isLike', 1);
+                }])->with(['notifications.user', 'notifications'=> function ($notification) {
+                    $notification->where('isLike', 0);
+                }]);
+            }]);
+        }])->firstWhere(['id' => $user->id])->movies;
+
+        return response()->json([
+            'movies' => $movies,
         ], 200);
     }
 

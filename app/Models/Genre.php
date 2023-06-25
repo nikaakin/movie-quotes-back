@@ -9,6 +9,12 @@ class Genre extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        'pivot',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'genre' => 'array'
     ];
