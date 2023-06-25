@@ -38,7 +38,7 @@ class AuthController extends Controller
         $email = $data['email'];
 
         if(isset($data['verifiedEmail'])) {
-            $user = User::where('email', $email)->update(['email'=> $data['verifiedEmail']]);
+            $user = User::firstWhere('email', $email)->update(['email'=> $data['verifiedEmail']]);
             return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
         }
 
@@ -48,7 +48,7 @@ class AuthController extends Controller
         } else {
             isset($data['password']) && $data['password'] = bcrypt($request->password);
 
-            if($data['newEmail']) {
+            if(isset($data['newEmail'])) {
                 $user = User::firstWhere('email', $email);
                 $newEmail = $data['newEmail'];
                 unset($data['newEmail']);
@@ -69,6 +69,8 @@ class AuthController extends Controller
             $imageName = Str::random(10).'.'.'png';
             Storage::disk('public')->put($imageName, base64_decode($data['image']));
             $data['image'] = env('APP_URL') . '/storage/'.$imageName;
+        } else {
+            unset($data['image']);
         }
         $user = User::updateOrCreate(['email'=> $email], $data);
         return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
