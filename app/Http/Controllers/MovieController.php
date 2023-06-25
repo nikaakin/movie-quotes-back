@@ -25,10 +25,9 @@ class MovieController extends Controller
         ], 200);
     }
 
-    public function moviesOfUser(User $user): JsonResponse
+    public function moviesOfUser(): JsonResponse
     {
-
-        $movies = $user->with(['movies'=>function ($movie) {
+        $movies = auth()->user()->with(['movies'=>function ($movie) {
             $movie->with(['genres','quotes'=>function ($quote) {
                 $quote->withCount(['notifications' => function ($notification) {
                     $notification->where('isLike', 1);
@@ -36,7 +35,7 @@ class MovieController extends Controller
                     $notification->where('isLike', 0);
                 }]);
             }]);
-        }])->firstWhere(['id' => $user->id])->movies;
+        }])->firstWhere(['id' => auth()->user()->id])->movies;
 
         return response()->json([
             'movies' => $movies,
