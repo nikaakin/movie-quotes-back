@@ -10,32 +10,15 @@ use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
 {
-    public function index(Movie $movie): JsonResponse
+    public function index(): JsonResponse
     {
-        $movie = $movie->with(['quotes'=>function ($quote) {
+        $movies = Movie::where("user_id", auth()->user()->id)->with(['genres','quotes'=>function ($quote) {
             $quote->withCount(['notifications' => function ($notification) {
                 $notification->where('isLike', 1);
             }])->with(['notifications.user', 'notifications'=> function ($notification) {
                 $notification->where('isLike', 0);
             }]);
-        }])->firstWhere($movie);
-
-        return response()->json([
-            'movies' => $movie,
-        ], 200);
-    }
-
-    public function moviesOfUser(): JsonResponse
-    {
-        $movies = auth()->user()->with(['movies'=>function ($movie) {
-            $movie->with(['genres','quotes'=>function ($quote) {
-                $quote->withCount(['notifications' => function ($notification) {
-                    $notification->where('isLike', 1);
-                }])->with(['notifications.user', 'notifications'=> function ($notification) {
-                    $notification->where('isLike', 0);
-                }]);
-            }]);
-        }])->firstWhere(['id' => auth()->user()->id])->movies;
+        }])->get();
 
         return response()->json([
             'movies' => $movies,
