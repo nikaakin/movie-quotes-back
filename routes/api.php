@@ -34,7 +34,7 @@ Route::group(['controller' => AuthController::class], function () {
 Route::group([ 'prefix' => 'movies'], function () {
 
     Route::group(["middleware" => "auth:sanctum",'controller' => MovieController::class], function () {
-        Route::get('/{movie}', 'index')->name('movies.index');
+        Route::get('/', 'index')->name('movies.index');
         Route::post('/store', 'store')->name('movies.store');
         Route::patch('/update/{movie}', 'update')->name('movies.update');
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
