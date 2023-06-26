@@ -20,15 +20,15 @@ class MovieController extends Controller
         ], 200);
     }
 
-    public function show(Movie $movie): JsonResponse
+    public function show(int $movieId): JsonResponse
     {
-        Quote::where("movie_id", $movie->id)->withCount(['notifications as like' => function ($notification) {
-            $notification->where('isLike', 1);
-        },'notifications'=> function ($notification) {
-            $notification->where('isLike', 0);
-        }])->get();
-        $movie['genres'] = $movie->genres;
-        $movie['quotes'] = $movie->quotes;
+        $movie = Movie::where('id', $movieId)->with(['genres','quotes' => function ($query) {
+            $query->withCount(['notifications as likes' => function ($notification) {
+                $notification->where('isLike', 1);
+            },'notifications as comments'=> function ($notification) {
+                $notification->where('isLike', 0);
+            }]);
+        }])->first();
 
         return response()->json([
             'movie' => $movie,
