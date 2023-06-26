@@ -53,3 +53,5 @@ Route::group([ 'prefix' => 'movies'], function () {
         });
     });
 });
+
+Route::get('/genres', 'index')->name('genres.index');
