@@ -35,6 +35,7 @@ Route::group([ 'prefix' => 'movies'], function () {
 
     Route::group(["middleware" => "auth:sanctum",'controller' => MovieController::class], function () {
         Route::get('/', 'index')->name('movies.index');
+        Route::get('/{movieId}', 'show')->name('movies.show');
         Route::post('/store', 'store')->name('movies.store');
         Route::patch('/update/{movie}', 'update')->name('movies.update');
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
@@ -42,7 +43,6 @@ Route::group([ 'prefix' => 'movies'], function () {
 
 
     Route::group(['controller' => QuoteController::class], function () {
-        Route::get('/{movie}/quotes/{skip}', 'quotesOfMovie')->name('movies.quotes.index');
         Route::group(['prefix' => 'quotes'], function () {
             Route::get('/{skip}', 'index')->name('quotes.index');
             Route::group([ "middleware" => "auth:sanctum"], function () {

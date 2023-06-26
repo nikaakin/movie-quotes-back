@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\movies\UpdateRequest;
 use App\Http\Requests\movies\StoreRequest;
 use App\Models\Movie;
+use App\Models\Quote;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -12,16 +13,25 @@ class MovieController extends Controller
 {
     public function index(): JsonResponse
     {
-        $movies = Movie::where("user_id", auth()->user()->id)->with(['genres','quotes'=>function ($quote) {
-            $quote->withCount(['notifications' => function ($notification) {
-                $notification->where('isLike', 1);
-            }])->with(['notifications.user', 'notifications'=> function ($notification) {
-                $notification->where('isLike', 0);
-            }]);
-        }])->get();
+        $movies = Movie::where("user_id", auth()->user()->id)->withCount('quotes')->get();
 
         return response()->json([
             'movies' => $movies,
+        ], 200);
+    }
+
+    public function show(int $movieId): JsonResponse
+    {
+        $movie = Movie::where('id', $movieId)->with(['genres','quotes' => function ($query) {
+            $query->withCount(['notifications as likes' => function ($notification) {
+                $notification->where('isLike', 1);
+            },'notifications as comments'=> function ($notification) {
+                $notification->where('isLike', 0);
+            }]);
+        }])->first();
+
+        return response()->json([
+            'movie' => $movie,
         ], 200);
     }
 

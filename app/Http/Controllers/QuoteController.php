@@ -23,15 +23,6 @@ class QuoteController extends Controller
         ], 200);
     }
 
-    public function quotesOfMovie(int $skip, Movie $movie): JsonResponse
-    {
-        $quotes = $movie->quotes()->skip($skip)->take(10)->get();
-
-        return response()->json([
-            'quotes' => $quotes,
-        ], 200);
-    }
-
     public function store(StoreRequest $request): JsonResponse
     {
         $quote = Quote::create($request->validated());
