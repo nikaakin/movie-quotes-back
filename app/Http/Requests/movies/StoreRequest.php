@@ -9,15 +9,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreRequest extends FormRequest
 {
-    public function prepareForValidation()
-    {
-        $image = str_replace('data:image/png;base64,', '', $this->image);
-        $image = str_replace(' ', '+', $image);
-        $this->merge([
-            'image' => $image,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
@@ -27,7 +18,7 @@ class StoreRequest extends FormRequest
             'director.ka' => "required|regex:/^[ა-ჰ\s]+$/",
             'description.en' => "required|regex:/^[A-Za-z\s]+$/",
             'description.ka' => "required|regex:/^[ა-ჰ\s]+$/",
-            'image'=> "required",
+            'image'=> "required|image",
             'year' => "required",
             'user_id' => 'required|exists:users,id',
             'genres' => 'required|array',

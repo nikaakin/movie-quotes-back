@@ -38,9 +38,8 @@ class MovieController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $imageName = Str::random(10).'.'.'png';
-        Storage::disk('public')->put('movies/'.$imageName, base64_decode($data['image']));
-        $data['image'] = env('APP_URL') . '/storage/movies/'.$imageName;
+        $url = $request->file('image')->store('movies', 'public');
+        $data['image'] = env('APP_URL') .'/storage/'. $url;
         $movie = Movie::create($data);
         return response()->json([
             'movie' => $movie,
