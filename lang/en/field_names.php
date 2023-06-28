@@ -14,4 +14,5 @@ return [
     "user" => "user",
     "quote" => "quote",
     "movie" => "movie",
+    "genre" => "genre",
 ];

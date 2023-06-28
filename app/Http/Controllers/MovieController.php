@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\movies\UpdateRequest;
 use App\Http\Requests\movies\StoreRequest;
 use App\Models\Movie;
-use App\Models\Quote;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MovieController extends Controller
 {
@@ -37,7 +37,10 @@ class MovieController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $movie = Movie::create($request->validated());
+        $data = $request->validated();
+        $url = $request->file('image')->store('movies', 'public');
+        $data['image'] = env('APP_URL') .'/storage/'. $url;
+        $movie = Movie::create($data);
         return response()->json([
             'movie' => $movie,
         ], 201);
