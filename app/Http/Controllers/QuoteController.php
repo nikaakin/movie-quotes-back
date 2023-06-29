@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\quotes\StoreRequest;
 use App\Http\Requests\quotes\UpdateRequest;
-use App\Models\Movie;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,13 @@ class QuoteController extends Controller
             $notification->where('isLike', 1);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
             $notification->where('isLike', 0);
-        }])->skip($skip)->take(10)->get()->sortByDesc('created_at')->values();
+        }])->latest()->get()->skip($skip*5)->take(5)->values();
+        $has_more_pages = Quote::count() > ($skip + 1) * 5;
 
         return response()->json([
             'quotes' => $quotes,
+            'has_more_pages' => $has_more_pages,
+            'current_page' => $skip,
         ], 200);
     }
 
