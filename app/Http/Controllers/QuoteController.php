@@ -27,7 +27,12 @@ class QuoteController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $quote = Quote::create($request->validated());
+        $data = $request->validated();
+        $url = $request->file('image')->store('quotes', 'public');
+        $user = auth()->user();
+        $data['user_id'] = $user->id;
+        $data['image'] = env('APP_URL') .'/storage/'. $url;
+        $quote = Quote::create($data);
         return response()->json([
             'quote' => $quote,
         ], 201);
