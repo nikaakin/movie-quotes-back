@@ -29,8 +29,7 @@ class QuoteController extends Controller
     {
         $data = $request->validated();
         $url = $request->file('image')->store('quotes', 'public');
-        $user = auth()->user();
-        $data['user_id'] = $user->id;
+        $data['user_id'] = auth()->user()->id;
         $data['image'] = env('APP_URL') .'/storage/'. $url;
         $quote = Quote::create($data);
         return response()->json([
