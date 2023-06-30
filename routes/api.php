@@ -41,16 +41,15 @@ Route::group([ 'prefix' => 'movies'], function () {
         Route::patch('/update/{movie}', 'update')->name('movies.update');
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
     });
+});
 
-
-    Route::group(['controller' => QuoteController::class], function () {
-        Route::group(['prefix' => 'quotes'], function () {
-            Route::get('/{skip}', 'index')->name('quotes.index');
-            Route::group([ "middleware" => "auth:sanctum"], function () {
-                Route::post('/store', 'store')->name('quotes.store');
-                Route::patch('/update/{quote}', 'update')->name('quotes.update');
-                Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
-            });
+Route::group(['controller' => QuoteController::class], function () {
+    Route::group(['prefix' => 'quotes'], function () {
+        Route::get('/{akip}', 'index')->name('quotes.index');
+        Route::group([ "middleware" => "auth:sanctum"], function () {
+            Route::post('/store', 'store')->name('quotes.store');
+            Route::patch('/update/{quote}', 'update')->name('quotes.update');
+            Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
         });
     });
 });
