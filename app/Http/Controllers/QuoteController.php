@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\quotes\StoreRequest;
 use App\Http\Requests\quotes\UpdateRequest;
+use App\Models\Movie;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -51,5 +52,14 @@ class QuoteController extends Controller
         return response()->json([
             'message' => 'Quote deleted successfully'
         ], 204);
+    }
+
+    public function search(): JsonResponse
+    {
+        $quotes = Quote::search(request()->query('search'));
+
+        return response()->json([
+            'quotes' =>  $quotes,
+        ], 200);
     }
 }
