@@ -57,24 +57,10 @@ class QuoteController extends Controller
     public function search(): JsonResponse
     {
         $searchQuery = request()->query('search');
-        $firstFilter = collect([]);
-        $secondFilter = collect([]);
-
-        if(str_starts_with($searchQuery, '@') || !str_contains($searchQuery, '#')) {
-            $searchQuery = str_replace('@', '', $searchQuery);
-            $firstFilter =  Quote::search($searchQuery)->get();
-        }
-
-        if(str_starts_with($searchQuery, '#') || !str_contains($searchQuery, '@')) {
-            $searchQuery = str_replace('#', '', $searchQuery);
-            $filteredmovies =  Movie::search($searchQuery)->with('quotes')->get();
-            $filteredmovies->each(function ($movie) use (&$secondFilter) {
-                $secondFilter->push(...$movie->quotes);
-            });
-        }
+        $quotes = Quote::search($searchQuery);
 
         return response()->json([
-            'quotes' =>  $secondFilter->merge($firstFilter),
+            'quotes' =>  $quotes,
         ], 200);
     }
 }
