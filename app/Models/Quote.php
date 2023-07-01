@@ -34,25 +34,23 @@ class Quote extends Model
 
     public function scopeSearch($query, string $searchQuery)
     {
-        $firstFilter = collect([]);
-        $secondFilter = collect([]);
 
-        if(str_starts_with($searchQuery, '@') || !str_contains($searchQuery, '#')) {
+        if(str_starts_with($searchQuery, '@')) {
             $searchQuery = str_replace('@', '', $searchQuery);
-            $firstFilter =  $query->where(function ($query) use ($searchQuery) {
+            return $query->where(function ($query) use ($searchQuery) {
                 $query->WhereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ["%$searchQuery%"])
-                    ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ["%$searchQuery%"]);
+                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ["%$searchQuery%"]);
             })->get();
         }
 
-        if(str_starts_with($searchQuery, '#') || !str_contains($searchQuery, '@')) {
+        if(str_starts_with($searchQuery, '#')) {
             $searchQuery = str_replace('#', '', $searchQuery);
-            $filteredmovies =  Movie::search($searchQuery)->with('quotes')->get();
-            $filteredmovies->each(function ($movie) use (&$secondFilter) {
-                $secondFilter->push(...$movie->quotes);
-            });
+            return $query->whereHas('movie', function ($q) use ($searchQuery) {
+                return $q->where(function ($q) use ($searchQuery) {
+                    $q->WhereRaw('LOWER(JSON_EXTRACT(title, "$.en")) like ?', ["%$searchQuery%"])
+                        ->orWhereRaw('LOWER(JSON_EXTRACT(title, "$.ka")) like ?', ["%$searchQuery%"]);
+                });
+            })->get();
         }
-
-        return $firstFilter->merge($secondFilter)->unique('id')->values();
     }
 }

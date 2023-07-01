@@ -56,8 +56,7 @@ class QuoteController extends Controller
 
     public function search(): JsonResponse
     {
-        $searchQuery = request()->query('search');
-        $quotes = Quote::search($searchQuery);
+        $quotes = Quote::search(request()->query('search'));
 
         return response()->json([
             'quotes' =>  $quotes,
