@@ -35,6 +35,12 @@ class Movie extends Model
         return $this->belongsToMany(Genre::class);
     }
 
-
+    public function scopeSearch($query, string $searchQuery)
+    {
+        return $query->where(function ($query) use ($searchQuery) {
+            $query->WhereRaw('LOWER(JSON_EXTRACT(title, "$.en")) like ?', ["%$searchQuery%"])
+                ->orWhereRaw('LOWER(JSON_EXTRACT(title, "$.ka")) like ?', ["%$searchQuery%"]);
+        });
+    }
 
 }

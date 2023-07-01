@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\quotes\StoreRequest;
 use App\Http\Requests\quotes\UpdateRequest;
+use App\Models\Movie;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -51,5 +52,29 @@ class QuoteController extends Controller
         return response()->json([
             'message' => 'Quote deleted successfully'
         ], 204);
+    }
+
+    public function search(): JsonResponse
+    {
+        $searchQuery = request()->query('search');
+        $firstFilter = collect([]);
+        $secondFilter = collect([]);
+
+        if(str_starts_with($searchQuery, '@') || !str_contains($searchQuery, '#')) {
+            $searchQuery = str_replace('@', '', $searchQuery);
+            $firstFilter =  Quote::search($searchQuery)->get();
+        }
+
+        if(str_starts_with($searchQuery, '#') || !str_contains($searchQuery, '@')) {
+            $searchQuery = str_replace('#', '', $searchQuery);
+            $filteredmovies =  Movie::search($searchQuery)->with('quotes')->get();
+            $filteredmovies->each(function ($movie) use (&$secondFilter) {
+                $secondFilter->push(...$movie->quotes);
+            });
+        }
+
+        return response()->json([
+            'quotes' =>  $secondFilter->merge($firstFilter),
+        ], 200);
     }
 }

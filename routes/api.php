@@ -45,12 +45,13 @@ Route::group([ 'prefix' => 'movies'], function () {
 
 Route::group(['controller' => QuoteController::class], function () {
     Route::group(['prefix' => 'quotes'], function () {
-        Route::get('/{akip}', 'index')->name('quotes.index');
         Route::group([ "middleware" => "auth:sanctum"], function () {
+            Route::get('/search', 'search')->name('search');
             Route::post('/store', 'store')->name('quotes.store');
             Route::patch('/update/{quote}', 'update')->name('quotes.update');
             Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
         });
+        Route::get('/{skip}', 'index')->name('quotes.index');
     });
 });
 
