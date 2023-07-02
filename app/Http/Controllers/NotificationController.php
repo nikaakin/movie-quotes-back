@@ -22,4 +22,17 @@ class NotificationController extends Controller
 
         return response()->json(['message' => 'success'], 201);
     }
+
+    public function comment(string $quoteId)
+    {
+        $comment  = Notification::Create([
+            'quote_id' => $quoteId,
+            'user_id' => auth()->user()->id,
+            'isLike' => false,
+            'comment' => request()->input('comment')
+        ]);
+
+        return response()->json(['message' => 'success', "comment" =>$comment], 201);
+    }
+
 }
