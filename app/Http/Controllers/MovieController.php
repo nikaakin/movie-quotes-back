@@ -23,7 +23,7 @@ class MovieController extends Controller
     public function show(int $movieId): JsonResponse
     {
         $movie = Movie::where('id', $movieId)->with(['genres','quotes' => function ($query) {
-            $query->with(['notifications'=> function ($notification) {
+            $query->with(['notifications.user', 'user','notifications'=> function ($notification) {
                 $notification->where('isLike', 0);
             }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
