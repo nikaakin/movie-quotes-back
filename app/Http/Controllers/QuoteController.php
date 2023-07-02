@@ -12,7 +12,7 @@ class QuoteController extends Controller
 {
     public function index(int $skip): JsonResponse
     {
-        $quotes = Quote::withCount(['notifications' => function ($notification) {
+        $quotes = Quote::withCount(['notifications as likes' => function ($notification) {
             $notification->where('isLike', 1);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
             $notification->where('isLike', 0);

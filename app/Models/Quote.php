@@ -40,7 +40,11 @@ class Quote extends Model
             return $query->where(function ($query) use ($searchQuery) {
                 $query->WhereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ["%$searchQuery%"])
                 ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ["%$searchQuery%"]);
-            })->get();
+            })->with(['user','notifications'=> function ($notification) {
+                $notification->where('isLike', 0);
+            }])->withCount(['notifications as likes'=> function ($notification) {
+                $notification->where('isLike', 1);
+            }])->get();
         }
 
         if(str_starts_with($searchQuery, '#')) {
@@ -50,7 +54,11 @@ class Quote extends Model
                     $q->WhereRaw('LOWER(JSON_EXTRACT(title, "$.en")) like ?', ["%$searchQuery%"])
                         ->orWhereRaw('LOWER(JSON_EXTRACT(title, "$.ka")) like ?', ["%$searchQuery%"]);
                 });
-            })->get();
+            })->with(['user', 'notifications'=> function ($notification) {
+                $notification->where('isLike', 0);
+            }])->withCount(['notifications as likes'=> function ($notification) {
+                $notification->where('isLike', 1);
+            }])->get();
         }
     }
 }
