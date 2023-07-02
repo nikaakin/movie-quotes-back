@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuoteController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,8 +51,16 @@ Route::group(['controller' => QuoteController::class], function () {
             Route::post('/store', 'store')->name('quotes.store');
             Route::patch('/update/{quote}', 'update')->name('quotes.update');
             Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
+            Route::get('/{skip}', 'index')->name('quotes.index');
         });
-        Route::get('/{skip}', 'index')->name('quotes.index');
+    });
+});
+
+Route::group(['controller' => NotificationController::class], function () {
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::group([ "middleware" => "auth:sanctum"], function () {
+            Route::patch('/like/{quoteId}', 'toggleLike')->name('notifications.toggleLike');
+        });
     });
 });
 

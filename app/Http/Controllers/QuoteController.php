@@ -14,6 +14,8 @@ class QuoteController extends Controller
     {
         $quotes = Quote::withCount(['notifications as likes' => function ($notification) {
             $notification->where('isLike', 1);
+        }, 'notifications as current_user_likes' => function ($notification) {
+            $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
             $notification->where('isLike', 0);
         }])->latest()->get()->skip($skip*5)->take(5)->values();
