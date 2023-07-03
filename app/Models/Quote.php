@@ -44,6 +44,8 @@ class Quote extends Model
                 $notification->where('isLike', 0);
             }])->withCount(['notifications as likes'=> function ($notification) {
                 $notification->where('isLike', 1);
+            }, 'notifications as current_user_likes' => function ($notification) {
+                $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
             }])->get();
         }
 
@@ -58,6 +60,8 @@ class Quote extends Model
                 $notification->where('isLike', 0);
             }])->withCount(['notifications as likes'=> function ($notification) {
                 $notification->where('isLike', 1);
+            }, 'notifications as current_user_likes' => function ($notification) {
+                $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
             }])->get();
         }
     }
