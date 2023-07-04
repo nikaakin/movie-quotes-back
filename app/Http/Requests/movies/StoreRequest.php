@@ -20,7 +20,6 @@ class StoreRequest extends FormRequest
             'description.ka' => "required|regex:/^[ა-ჰ\s]+$/",
             'image'=> "required|image",
             'year' => "required",
-            'user_id' => 'required|exists:users,id',
             'genres' => 'required|array',
         ];
     }
