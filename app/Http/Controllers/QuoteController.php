@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\quotes\StoreRequest;
 use App\Http\Requests\quotes\UpdateRequest;
-use App\Models\Movie;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 

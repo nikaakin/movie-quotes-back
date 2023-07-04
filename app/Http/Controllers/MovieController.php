@@ -28,7 +28,7 @@ class MovieController extends Controller
             }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
-                $notification->where('isLike', 1)->andWhere('user_id', auth()->user()->id);
+                $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
             }]);
         }])->first();
 
