@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewNotification;
 use App\Models\Notification;
 
 class NotificationController extends Controller
@@ -13,13 +14,16 @@ class NotificationController extends Controller
         if ($notification->value('id')) {
             $notification->delete();
         } else {
-            Notification::Create([
+            $notification = Notification::Create([
                 'quote_id' => $quoteId,
                 'user_id' => auth()->user()->id,
                 'isLike' => true
             ]);
-        }
+            $data['notification'] = $notification;
+            $data['sender'] = auth()->user();
 
+            event(new NewNotification($data));
+        }
         return response()->json(['message' => 'success'], 201);
     }
 
@@ -31,7 +35,10 @@ class NotificationController extends Controller
             'isLike' => false,
             'comment' => request()->input('comment')
         ]);
+        $data['notification'] = $comment;
+        $data['sender'] = auth()->user();
 
+        event(new NewNotification($data));
         return response()->json(['message' => 'success', "comment" =>$comment], 201);
     }
 
