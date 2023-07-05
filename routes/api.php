@@ -39,7 +39,7 @@ Route::group([ 'prefix' => 'movies'], function () {
         Route::get('/', 'index')->name('movies.index');
         Route::get('/{movieId}', 'show')->name('movies.show');
         Route::post('/store', 'store')->name('movies.store');
-        Route::patch('/update/{movie}', 'update')->name('movies.update');
+        Route::post('/update/{movie}', 'update')->name('movies.update');
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
     });
 });

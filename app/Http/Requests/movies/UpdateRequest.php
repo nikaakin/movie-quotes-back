@@ -2,33 +2,25 @@
 
 namespace App\Http\Requests\movies;
 
+use App\Rules\UniqueJson;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateRequest extends FormRequest
 {
-    public function prepareForValidation()
-    {
-        $image = str_replace('data:image/png;base64,', '', $this->image);
-        $image = str_replace(' ', '+', $image);
-        $this->merge([
-            'image' => $image,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
-            'title.en' => "required|unique:movies,title->en",
-            'title.ka' => "required|unique:movies,title->ka",
-            'director.en' => "required",
-            'director.ka' => "required",
-            'description.en' => "required",
-            'description.ka' => "required",
-            'image'=> "required",
-            'year' => "required",
-            'user_id' => 'required|exists:users,id',
+            'title.en' => ['regex:/^[A-Za-z\s]+$/',  new UniqueJson('en', 'movies', 'title') ],
+            'title.ka' => ['regex:/^[ა-ჰ\s]+$/', new UniqueJson('ka', 'movies', 'title')],
+            'director.en' => "regex:/^[A-Za-z\s]+$/",
+            'director.ka' => "regex:/^[ა-ჰ\s]+$/",
+            'description.en' => "regex:/^[A-Za-z\s]+$/",
+            'description.ka' => "regex:/^[ა-ჰ\s]+$/",
+            'image'=> "image",
+            'year' => "",
+            'genres' => 'array',
         ];
     }
 

@@ -40,6 +40,7 @@ class MovieController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $data['user_id'] = auth()->user()->id;
         $url = $request->file('image')->store('movies', 'public');
         $data['image'] = env('APP_URL') .'/storage/'. $url;
         $movie = Movie::create($data)->genres()->attach($data['genres']);
@@ -50,7 +51,13 @@ class MovieController extends Controller
 
     public function update(UpdateRequest $request, Movie $movie): JsonResponse
     {
-        $movie->update($request->validated());
+        if($request->file('image')) {
+            $url = $request->file('image')->store('movies', 'public');
+            $data['image'] = env('APP_URL') .'/storage/'. $url;
+        }
+        $data = $request->validated();
+        $data['user_id'] = auth()->user()->id;
+        $movie->update($data);
         return response()->json([
             'movie' => $movie,
         ], 201);
