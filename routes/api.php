@@ -49,7 +49,7 @@ Route::group(['controller' => QuoteController::class], function () {
         Route::group([ "middleware" => "auth:sanctum"], function () {
             Route::get('/search', 'search')->name('search');
             Route::post('/store', 'store')->name('quotes.store');
-            Route::patch('/update/{quote}', 'update')->name('quotes.update');
+            Route::post('/update/{quote}', 'update')->name('quotes.update');
             Route::delete('/destroy/{quote}', 'destroy')->name('quotes.destroy');
         });
         Route::get('/{skip}', 'index')->name('quotes.index');

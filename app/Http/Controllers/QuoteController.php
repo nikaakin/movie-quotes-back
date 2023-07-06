@@ -33,7 +33,13 @@ class QuoteController extends Controller
         $url = $request->file('image')->store('quotes', 'public');
         $data['user_id'] = auth()->user()->id;
         $data['image'] = env('APP_URL') .'/storage/'. $url;
-        $quote = Quote::create($data);
+        $quote = Quote::create($data)->withCount(['notifications as likes' => function ($notification) {
+            $notification->where('isLike', 1);
+        }, 'notifications as current_user_likes' => function ($notification) {
+            $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
+        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
+            $notification->where('isLike', 0);
+        }])->latest()->first();
         return response()->json([
             'quote' => $quote,
         ], 201);
@@ -41,7 +47,12 @@ class QuoteController extends Controller
 
     public function update(UpdateRequest $request, Quote $quote): JsonResponse
     {
-        $quote->update($request->validated());
+        $data = $request->validated();
+        if($request->file('image')) {
+            $url = $request->file('image')->store('movies', 'public');
+            $data['image'] = env('APP_URL') .'/storage/'. $url;
+        }
+        $quote->update($data);
         return response()->json([
             'quote' => $quote,
         ], 201);
