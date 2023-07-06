@@ -17,7 +17,7 @@ class NewNotification implements ShouldBroadcast
     use SerializesModels;
 
 
-    public function __construct(public array  $notification)
+    public function __construct(public object  $notification)
     {
     }
 
