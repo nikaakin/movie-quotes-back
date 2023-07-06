@@ -41,7 +41,12 @@ class QuoteController extends Controller
 
     public function update(UpdateRequest $request, Quote $quote): JsonResponse
     {
-        $quote->update($request->validated());
+        $data = $request->validated();
+        if($request->file('image')) {
+            $url = $request->file('image')->store('movies', 'public');
+            $data['image'] = env('APP_URL') .'/storage/'. $url;
+        }
+        $quote->update($data);
         return response()->json([
             'quote' => $quote,
         ], 201);
