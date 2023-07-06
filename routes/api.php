@@ -59,6 +59,7 @@ Route::group(['controller' => QuoteController::class], function () {
 Route::group(['controller' => NotificationController::class], function () {
     Route::group(['prefix' => 'notifications'], function () {
         Route::group([ "middleware" => "auth:sanctum"], function () {
+            Route::get('/{skip}', 'index')->name('notifications.index');
             Route::patch('/like/{quoteId}', 'toggleLike')->name('notifications.toggleLike');
             Route::patch('/comment/{quoteId}', 'comment')->name('notifications.comment');
         });
