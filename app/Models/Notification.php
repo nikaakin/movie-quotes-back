@@ -20,7 +20,7 @@ class Notification extends Model
 
     public function quote()
     {
-        return $this->belongsTo(quote::class);
+        return $this->belongsTo(Quote::class);
     }
 
 }
