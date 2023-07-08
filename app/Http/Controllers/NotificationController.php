@@ -8,15 +8,14 @@ use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
 {
-    public function index(int $skip): JsonResponse
+    public function index(): JsonResponse
     {
-        $notifications = Notification::with(['user'])->
-        latest()->get()->skip($skip)->take(10)->values();
-        $has_more_pages = Notification::count() > ($skip + 10);
+        $notifications = Notification::whereHas('quote', function ($quote) {
+            $quote->where('user_id', auth()->user()->id);
+        })->with(['user'])->get();
 
         return response()->json([
             'notifications' => $notifications,
-            'has_more_pages' => $has_more_pages,
         ], 200);
     }
 
@@ -53,12 +52,6 @@ class NotificationController extends Controller
 
         event(new NewNotification(collect($data)));
         return response()->json(['message' => 'success', "comment" =>$comment], 201);
-    }
-
-    public function seen(Notification $notification): JsonResponse
-    {
-        $notification->update(['seen' => true]);
-        return response()->json(['message' => 'success'], 201);
     }
 
 }
