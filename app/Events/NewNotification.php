@@ -24,7 +24,7 @@ class NewNotification implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('notifications'),
+            new PrivateChannel('notification.' . $this->notification['to']),
         ];
     }
 }

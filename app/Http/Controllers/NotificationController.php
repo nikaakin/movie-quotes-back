@@ -12,7 +12,7 @@ class NotificationController extends Controller
     {
         $notifications = Notification::whereHas('quote', function ($quote) {
             $quote->where('user_id', auth()->user()->id);
-        })->with(['user'])->get();
+        })->with(['user'])->latest()->get();
 
         return response()->json([
             'notifications' => $notifications,
@@ -33,10 +33,11 @@ class NotificationController extends Controller
             ]);
             $data = $notification;
             $data['user'] = auth()->user();
+            $data['to'] = $data->quote->user_id;
 
             event(new NewNotification(collect($data)));
         }
-        return response()->json(['message' => 'success'], 201);
+        return response()->json(['message' => 'success',], 201);
     }
 
     public function comment(string $quoteId): JsonResponse
@@ -49,6 +50,7 @@ class NotificationController extends Controller
         ]);
         $data = $comment;
         $data['user'] = auth()->user();
+        $data['to'] = $comment->quote->user_id;
 
         event(new NewNotification(collect($data)));
         return response()->json(['message' => 'success', "comment" =>$comment], 201);
