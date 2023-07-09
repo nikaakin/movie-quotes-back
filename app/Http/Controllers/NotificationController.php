@@ -54,4 +54,16 @@ class NotificationController extends Controller
         return response()->json(['message' => 'success', "comment" =>$comment], 201);
     }
 
+    public function seen(Notification $notification): JsonResponse
+    {
+        $notification->update(['seen'=> true]);
+        return response()->json(['message' => 'success'], 201);
+    }
+
+    public function seenAll(): JsonResponse
+    {
+        Notification::where('user_id', auth()->user()->id)->update(['seen'=> true]);
+        return response()->json('success', 201);
+    }
+
 }

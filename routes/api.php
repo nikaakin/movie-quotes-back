@@ -62,6 +62,7 @@ Route::group(['controller' => NotificationController::class], function () {
             Route::get('/', 'index')->name('notifications.index');
             Route::patch('/like/{quoteId}', 'toggleLike')->name('notifications.toggleLike');
             Route::patch('/comment/{quoteId}', 'comment')->name('notifications.comment');
+            Route::patch('/seen', 'seenAll')->name('notifications.seenAll');
             Route::patch('/seen/{notification}', 'seen')->name('notifications.seen');
         });
     });
