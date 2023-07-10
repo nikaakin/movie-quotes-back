@@ -58,6 +58,7 @@ class MovieController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->user()->id;
         $movie->update($data);
+        $movie->genres()->sync($data['genres']);
         return response()->json([
             'movie' => $movie,
         ], 201);
