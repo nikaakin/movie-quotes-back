@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GenreFactory extends Factory
@@ -10,8 +11,8 @@ class GenreFactory extends Factory
     {
         return [
             'genre' => [
-                'en' => $this->faker->unique()->word(),
-                'ka' => $this->faker->unique()->word(),
+                'en' => FakerFactory::create('en_US')->unique()->word(),
+                'ka' => FakerFactory::create('ka_GE')->unique()->word(),
             ],
         ];
     }

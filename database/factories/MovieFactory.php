@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MovieFactory extends Factory
@@ -11,16 +12,16 @@ class MovieFactory extends Factory
     {
         return [
             'title' => [
-                'en' => $this->faker->unique()->sentence(1),
-                'ka' => $this->faker->unique()->sentence(1),
+                'en' => FakerFactory::create('en_US')->unique()->title(),
+                'ka' => FakerFactory::create('ka_GE')->unique()->title(),
             ],
             'description' => [
-                'en' => $this->faker->paragraph(1),
-                'ka' => $this->faker->paragraph(1),
+                'en' => FakerFactory::create('en_US')->paragraph(1),
+                'ka' => FakerFactory::create('ka_GE')->paragraph(1),
             ],
             'director'  => [
-                'en' => $this->faker->name(),
-                'ka' => $this->faker->name(),
+                'en' => FakerFactory::create('en_US')->name(),
+                'ka' => FakerFactory::create('ka_GE')->name(),
             ],
             'year' => $this->faker->year(),
             'image' => env('FRONTEND_URL') . '/assets/images/movie-image.png',
