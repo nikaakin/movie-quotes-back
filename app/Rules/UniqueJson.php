@@ -16,20 +16,24 @@ class UniqueJson implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $id = request()->segment(count(request()->segments()));
+        $current_record = null;
         if($id) {
             $current_record = DB::table($this->table)->where('id', $id)->first();
         }
 
 
-        $record = DB::table($this->table)->where(function ($query) use ($value) {
+        $records = DB::table($this->table)->where(function ($query) use ($value) {
             $query
                 ->whereRaw("JSON_EXTRACT(" . $this->column . ", '$.$this->language') = ?", [$value]);
-        })->first();
+        })->get();
 
-        if($record) {
-            if($current_record && $record->id != $current_record->id) {
-                $fail(__('validation.unique', ['attribute' => __('field_names.title')]));
-            } elseif(!$current_record) {
+        if($records) {
+            if($current_record) {
+                $already_exists = $records->firstWhere('id', '!=', $current_record->id);
+                if($already_exists) {
+                    $fail(__('validation.unique', ['attribute' => __('field_names.title')]));
+                }
+            } else {
                 $fail(__('validation.unique', ['attribute' => __('field_names.title')]));
             }
         }
