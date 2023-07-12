@@ -191,15 +191,15 @@ class AuthController extends Controller
         $googleUser =  Socialite::driver('google')->stateless()->user();
         $google_id = $googleUser->getId();
 
+        $user =User::where(['username'=> $googleUser->name ?? $googleUser->getNickname()])->first();
+
+        if($user && $user->google_id !== $google_id) {
+            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.username')])]], 401);
+        }
         $user =User::where(['email'=> $googleUser->getEmail()])->first();
 
         if($user && $user->google_id !== $google_id) {
             return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.email')])]], 401);
-        }
-        $user =User::where(['email'=> $googleUser->getEmail() ?? $googleUser->getNickname()])->first();
-
-        if($user && $user->google_id !== $google_id) {
-            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.username')])]], 401);
         }
         if(!$user) {
             $user = User::create(
