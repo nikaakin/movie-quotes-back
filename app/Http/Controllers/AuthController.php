@@ -196,28 +196,27 @@ class AuthController extends Controller
         if($user && $user->google_id !== $google_id) {
             return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.email')])]], 401);
         }
-        $user =User::where(['username'=> $googleUser->name ?? $googleUser->getNickname()])->first();
+        $user =User::where(['email'=> $googleUser->getEmail() ?? $googleUser->getNickname()])->first();
 
         if($user && $user->google_id !== $google_id) {
             return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.username')])]], 401);
         }
-
-        $user = User::updateOrCreate(
-            ['google_id' => $google_id],
-            [
-                'google_id' => $google_id,
-                'email' => $googleUser->getEmail(),
-                'username' => $googleUser->name ?? $googleUser->getNickname(),
-                'password' => null,
-                'image' => $googleUser->getAvatar(),
-            ]
-        );
+        if(!$user) {
+            $user = User::create(
+                [
+                    'google_id' => $google_id,
+                    'email' => $googleUser->getEmail(),
+                    'username' => $googleUser->name ?? $googleUser->getNickname(),
+                    'password' => null,
+                    'image' => $googleUser->getAvatar(),
+                ]
+            );
+        }
 
         auth()->login($user);
-        $user = auth()->user();
         return response()->json([
             'message' => 'user logged in',
-            'user' => $user,
+            'user' => auth()->user(),
         ]);
     }
 }
