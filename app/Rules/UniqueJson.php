@@ -21,13 +21,12 @@ class UniqueJson implements ValidationRule
             $current_record = DB::table($this->table)->where('id', $id)->first();
         }
 
-
         $records = DB::table($this->table)->where(function ($query) use ($value) {
             $query
                 ->whereRaw("JSON_EXTRACT(" . $this->column . ", '$.$this->language') = ?", [$value]);
         })->get();
 
-        if($records) {
+        if($records->count() > 0) {
             if($current_record) {
                 $already_exists = $records->firstWhere('id', '!=', $current_record->id);
                 if($already_exists) {

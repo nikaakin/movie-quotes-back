@@ -51,11 +51,11 @@ class MovieController extends Controller
 
     public function update(UpdateRequest $request, Movie $movie): JsonResponse
     {
+        $data = $request->validated();
         if($request->file('image')) {
             $url = $request->file('image')->store('movies', 'public');
             $data['image'] = env('APP_URL') .'/storage/'. $url;
         }
-        $data = $request->validated();
         $data['user_id'] = auth()->user()->id;
         $movie->update($data);
         $movie->genres()->sync($data['genres']);
