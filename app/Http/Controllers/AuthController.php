@@ -67,8 +67,8 @@ class AuthController extends Controller
 
         if($data['image']) {
             $imageName = Str::random(10).'.'.'png';
-            Storage::disk('public/avatars')->put($imageName, base64_decode($data['image']));
-            $data['image'] = env('APP_URL') . '/avatars/'.$imageName;
+            Storage::disk('public')->put('/avatars/'.$imageName, base64_decode($data['image']));
+            $data['image'] = env('APP_URL') . '/storage/avatars/'.$imageName;
         } else {
             unset($data['image']);
         }
