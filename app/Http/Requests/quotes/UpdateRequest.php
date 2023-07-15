@@ -10,7 +10,7 @@ class UpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->user()->id === $this->quote->user_id;
+        return auth()->user()->id === $this->current_quote->user_id;
     }
 
     public function rules(): array
