@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\quotes\DeleteRequest;
 use App\Http\Requests\quotes\StoreRequest;
 use App\Http\Requests\quotes\UpdateRequest;
 use App\Models\Quote;
@@ -58,7 +59,7 @@ class QuoteController extends Controller
         ], 201);
     }
 
-    public function destroy(Quote $quote): JsonResponse
+    public function destroy(DeleteRequest $request, Quote $quote): JsonResponse
     {
         $quote->delete();
         return response()->json([

@@ -9,6 +9,11 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return auth()->user()->id === $this->movie->user_id;
+    }
+
     public function rules(): array
     {
         return [
