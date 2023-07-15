@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\movies\DeleteRequest;
 use App\Http\Requests\movies\UpdateRequest;
 use App\Http\Requests\movies\StoreRequest;
 use App\Models\Movie;
@@ -65,7 +66,7 @@ class MovieController extends Controller
         ], 201);
     }
 
-    public function destroy(Movie $movie): JsonResponse
+    public function destroy(DeleteRequest $request, Movie $movie): JsonResponse
     {
         $movie->delete();
         return response()->json([
