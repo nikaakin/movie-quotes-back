@@ -31,7 +31,7 @@ class MovieController extends Controller
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
             }]);
-        }])->first();
+        }])->firstOrFail();
 
         return response()->json([
             'movie' => $movie,
