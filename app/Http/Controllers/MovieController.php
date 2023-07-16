@@ -44,7 +44,8 @@ class MovieController extends Controller
         $data['user_id'] = auth()->user()->id;
         $url = $request->file('image')->store('movies', 'public');
         $data['image'] = env('APP_URL') .'/storage/'. $url;
-        $movie = Movie::create($data)->genres()->attach($data['genres']);
+        $movie = Movie::create($data);
+        $movie->genres()->attach($data['genres']);
         return response()->json([
             'movie' => $movie,
         ], 201);
