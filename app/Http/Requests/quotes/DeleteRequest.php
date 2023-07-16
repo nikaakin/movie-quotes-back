@@ -8,6 +8,6 @@ class DeleteRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->quote->user_id === auth()->user()->id;
+        return $this->current_quote->user_id === auth()->user()->id;
     }
 }

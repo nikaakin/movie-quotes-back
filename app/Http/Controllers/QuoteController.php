@@ -46,22 +46,22 @@ class QuoteController extends Controller
         ], 201);
     }
 
-    public function update(UpdateRequest $request, Quote $quote): JsonResponse
+    public function update(UpdateRequest $request, Quote $current_quote): JsonResponse
     {
         $data = $request->validated();
         if($request->file('image')) {
             $url = $request->file('image')->store('movies', 'public');
             $data['image'] = env('APP_URL') .'/storage/'. $url;
         }
-        $quote->update($data);
+        $current_quote->update($data);
         return response()->json([
-            'quote' => $quote,
+            'quote' => $current_quote,
         ], 201);
     }
 
-    public function destroy(DeleteRequest $request, Quote $quote): JsonResponse
+    public function destroy(DeleteRequest $request, Quote $current_quote): JsonResponse
     {
-        $quote->delete();
+        $current_quote->delete();
         return response()->json([
             'message' => 'Quote deleted successfully'
         ], 204);
