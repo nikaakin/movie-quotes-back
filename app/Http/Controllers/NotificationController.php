@@ -24,7 +24,7 @@ class NotificationController extends Controller
         $notification = Notification::where(['quote_id'=>$quoteId, 'user_id'=> auth()->user()->id, 'isLike'=> 1]);
 
         if ($notification->value('id')) {
-            $notification->delete();
+            $notification->update(['isLike'=> false]);
         } else {
             $notification = Notification::Create([
                 'quote_id' => $quoteId,
@@ -64,7 +64,9 @@ class NotificationController extends Controller
 
     public function seenAll(): JsonResponse
     {
-        Notification::where('user_id', auth()->user()->id)->update(['seen'=> true]);
+        Notification::whereHas('quote', function ($quote) {
+            $quote->where('user_id', auth()->user()->id);
+        })->update(['seen'=> true]);
         return response()->json('success', 201);
     }
 
