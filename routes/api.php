@@ -21,50 +21,46 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['controller' => AuthController::class], function () {
-    Route::get('/user', 'isAuthenticated')->middleware('auth:sanctum');
+
     Route::post('/register', 'register')->name('register');
-    Route::patch('/update', 'update')->name('update');
     Route::post('/login', 'login')->name('login');
-    Route::get('/logout', 'logout')->name('logout');
     Route::get('/email/verify/{id}/{hash}', 'verification')->middleware(['signed'])->name('verification.verify');
     Route::post('/forgot-password', 'forgot')->name('password.forgot');
     Route::post('/reset-password', 'reset')->name('password.reset');
     Route::get('/auth/google/redirect', 'googleRedirect')->name('google.redirect');
     Route::get('/auth/google/callback', 'googleCallback')->name('google.callback');
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/logout', 'logout')->name('logout');
+        Route::patch('/update', 'update')->name('update');
+        Route::get('/user', 'isAuthenticated')->name('user.auth');
+    });
 });
 
-Route::group([ 'prefix' => 'movies'], function () {
-
-    Route::group(["middleware" => "auth:sanctum",'controller' => MovieController::class], function () {
+Route::group(['middleware' =>'auth:sanctum'], function () {
+    Route::group(['prefix' => 'movies','controller' => MovieController::class], function () {
         Route::get('/', 'index')->name('movies.index');
         Route::get('/{movieId}', 'show')->name('movies.show');
         Route::post('/store', 'store')->name('movies.store');
         Route::post('/update/{movie}', 'update')->name('movies.update');
         Route::delete('/destroy/{movie}', 'destroy')->name('movies.destroy');
     });
-});
 
-Route::group(['controller' => QuoteController::class], function () {
-    Route::group(['prefix' => 'quotes'], function () {
-        Route::group([ "middleware" => "auth:sanctum"], function () {
-            Route::get('/search', 'search')->name('search');
-            Route::post('/store', 'store')->name('quotes.store');
-            Route::post('/update/{current_quote}', 'update')->name('quotes.update');
-            Route::delete('/destroy/{current_quote}', 'destroy')->name('quotes.destroy');
-        });
+
+    Route::group(['controller' => QuoteController::class,'prefix' => 'quotes'], function () {
+        Route::get('/search', 'search')->name('search');
+        Route::post('/store', 'store')->name('quotes.store');
+        Route::post('/update/{current_quote}', 'update')->name('quotes.update');
+        Route::delete('/destroy/{current_quote}', 'destroy')->name('quotes.destroy');
         Route::get('/{skip}', 'index')->name('quotes.index');
     });
-});
 
-Route::group(['controller' => NotificationController::class], function () {
-    Route::group(['prefix' => 'notifications'], function () {
-        Route::group([ "middleware" => "auth:sanctum"], function () {
-            Route::get('/', 'index')->name('notifications.index');
-            Route::patch('/like/{quoteId}', 'toggleLike')->name('notifications.toggleLike');
-            Route::patch('/comment/{quoteId}', 'comment')->name('notifications.comment');
-            Route::patch('/seen', 'seenAll')->name('notifications.seenAll');
-            Route::patch('/seen/{notification}', 'seen')->name('notifications.seen');
-        });
+    Route::group(['controller' => NotificationController::class, 'prefix' => 'notifications'], function () {
+        Route::get('/', 'index')->name('notifications.index');
+        Route::patch('/like/{quoteId}', 'toggleLike')->name('notifications.toggleLike');
+        Route::patch('/comment/{quoteId}', 'comment')->name('notifications.comment');
+        Route::patch('/seen', 'seenAll')->name('notifications.seenAll');
+        Route::patch('/seen/{notification}', 'seen')->name('notifications.seen');
     });
 });
 
