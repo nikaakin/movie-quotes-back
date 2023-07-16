@@ -41,7 +41,7 @@ class Quote extends Model
                 $query->WhereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ["%$searchQuery%"])
                 ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ["%$searchQuery%"]);
             })->with(['user','notifications.user','notifications'=> function ($notification) {
-                $notification->where('isLike', 0);
+                $notification->where('comment', '!=', 'null');
             }])->withCount(['notifications as likes'=> function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
@@ -57,7 +57,7 @@ class Quote extends Model
                         ->orWhereRaw('LOWER(JSON_EXTRACT(title, "$.ka")) like ?', ["%$searchQuery%"]);
                 });
             })->with(['user','notifications.user', 'notifications'=> function ($notification) {
-                $notification->where('isLike', 0);
+                $notification->where('comment', "!=", "null");
             }])->withCount(['notifications as likes'=> function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {

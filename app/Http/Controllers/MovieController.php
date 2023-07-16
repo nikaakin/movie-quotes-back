@@ -25,13 +25,13 @@ class MovieController extends Controller
     {
         $movie = Movie::where('id', $movieId)->with(['genres','quotes' => function ($query) {
             $query->with(['notifications.user', 'user','notifications'=> function ($notification) {
-                $notification->where('isLike', 0);
+                $notification->where('comment', '!=', 'null');
             }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
             }]);
-        }])->first();
+        }])->firstOrFail();
 
         return response()->json([
             'movie' => $movie,
@@ -44,7 +44,8 @@ class MovieController extends Controller
         $data['user_id'] = auth()->user()->id;
         $url = $request->file('image')->store('movies', 'public');
         $data['image'] = env('APP_URL') .'/storage/'. $url;
-        $movie = Movie::create($data)->genres()->attach($data['genres']);
+        $movie = Movie::create($data);
+        $movie->genres()->attach($data['genres']);
         return response()->json([
             'movie' => $movie,
         ], 201);
