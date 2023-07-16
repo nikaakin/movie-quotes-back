@@ -33,6 +33,12 @@ class MovieController extends Controller
             }]);
         }])->first();
 
+        if(!$movie) {
+            return response()->json([
+                'message' => 'Movie not found'
+            ], 404);
+        }
+
         return response()->json([
             'movie' => $movie,
         ], 200);
