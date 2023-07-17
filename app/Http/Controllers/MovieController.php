@@ -25,7 +25,7 @@ class MovieController extends Controller
     {
         $movie = Movie::where('id', $movieId)->with(['genres','quotes' => function ($query) {
             $query->with(['notifications.user', 'user','notifications'=> function ($notification) {
-                $notification->where('isLike', 0);
+                $notification->where('comment', '!=', 'null');
             }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {

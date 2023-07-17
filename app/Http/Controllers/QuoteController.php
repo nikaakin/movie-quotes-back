@@ -17,7 +17,7 @@ class QuoteController extends Controller
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
-            $notification->where('isLike', 0);
+            $notification->where('comment', '!=', 'null');
         }])->latest()->get()->skip($skip*5)->take(5)->values();
         $has_more_pages = Quote::count() > ($skip + 1) * 5;
 
@@ -39,7 +39,7 @@ class QuoteController extends Controller
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
-            $notification->where('isLike', 0);
+            $notification->where('comment', '!=', 'null');
         }])->latest()->first();
         return response()->json([
             'quote' => $quote,
