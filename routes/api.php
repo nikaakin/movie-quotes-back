@@ -32,7 +32,7 @@ Route::group(['controller' => AuthController::class], function () {
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/logout', 'logout')->name('logout');
-        Route::patch('/update', 'update')->name('update');
+        Route::post('/update', 'update')->name('update');
         Route::get('/user', 'isAuthenticated')->name('user.auth');
     });
 });

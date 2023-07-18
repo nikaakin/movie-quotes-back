@@ -8,15 +8,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateRequest extends FormRequest
 {
-    public function prepareForValidation()
-    {
-        $image = str_replace('data:image/png;base64,', '', $this->image);
-        $image = str_replace(' ', '+', $image);
-        $this->merge([
-            'image' => $image,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
@@ -26,7 +17,7 @@ class UpdateRequest extends FormRequest
             'email' => 'email|required|exists:users,email',
             'password' => 'min:8|max:15|regex:/^[a-z0-9]+$/',
             "google_id"=>'',
-            'image'=>'string'
+            'image'=>'image'
         ];
     }
 
