@@ -23,6 +23,9 @@ class NewNotification implements ShouldBroadcast
 
     public function broadcastOn(): array
     {
+        if($this->notification['to'] == $this->notification['user_id']) {
+            return [];
+        }
         return [
             new PrivateChannel('notification.' . $this->notification['to']),
         ];
