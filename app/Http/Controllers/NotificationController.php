@@ -12,7 +12,7 @@ class NotificationController extends Controller
     {
         $notifications = Notification::whereHas('quote', function ($quote) {
             $quote->where('user_id', auth()->user()->id);
-        })->with(['user'])->latest()->get();
+        })->where('user_id', '!=', auth()->user()->id)->with(['user'])->latest()->get();
 
         return response()->json([
             'notifications' => $notifications,
