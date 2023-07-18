@@ -16,8 +16,8 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'quote.en' => "regex:/^[A-Za-z\s]+$/",
-            'quote.ka' => "regex:/^[ა-ჰ\s]+$/",
+            'quote.en' => "regex:/^[A-Za-z0-9 ,!'\s]+$/",
+            'quote.ka' => "regex:/^[ა-ჰ0-9 ,!'\s]+$/",
             'image'=> "image",
         ];
     }

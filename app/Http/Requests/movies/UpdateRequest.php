@@ -17,12 +17,12 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title.en' => ['regex:/^[A-Za-z\s]+$/',  new UniqueJson('en', 'movies', 'title') ],
-            'title.ka' => ['regex:/^[ა-ჰ\s]+$/', new UniqueJson('ka', 'movies', 'title')],
+            'title.en' => ["regex:/^[A-Za-z0-9 ,!'\s]+$/",  new UniqueJson('en', 'movies', 'title') ],
+            'title.ka' => ['regex:/^[ა-ჰ0-9\s]+$/', new UniqueJson('ka', 'movies', 'title')],
             'director.en' => "regex:/^[A-Za-z\s]+$/",
             'director.ka' => "regex:/^[ა-ჰ\s]+$/",
-            'description.en' => "regex:/^[A-Za-z0-9 _.,!']+$/",
-            'description.ka' => "regex:/^[ა-ჰ _.,!']+$/",
+            'description.en' => "regex:/^[A-Za-z0-9 ,!'\s]+$/",
+            'description.ka' => "regex:/^[ა-ჰ0-9 ,!'\s]+$/",
             'image'=> "image",
             'year' => "",
             'genres' => 'array',
