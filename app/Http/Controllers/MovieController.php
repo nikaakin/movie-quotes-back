@@ -33,6 +33,12 @@ class MovieController extends Controller
             }]);
         }])->firstOrFail();
 
+        if($movie->user_id != auth()->user()->id) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         return response()->json([
             'movie' => $movie,
         ], 200);
