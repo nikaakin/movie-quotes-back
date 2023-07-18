@@ -12,12 +12,12 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title.en' => ["required" ,'regex:/^[A-Za-z\s]+$/',  new UniqueJson('en', 'movies', 'title') ],
-            'title.ka' => ["required" ,'regex:/^[ა-ჰ\s]+$/', new UniqueJson('ka', 'movies', 'title')],
+            'title.en' => ["required" ,"regex:/^[A-Za-z0-9 ,!'\s]+$/",  new UniqueJson('en', 'movies', 'title') ],
+            'title.ka' => ["required" ,"regex:/^[ა-ჰ0-9 ,!'\s]+$/", new UniqueJson('ka', 'movies', 'title')],
             'director.en' => "required|regex:/^[A-Za-z\s]+$/",
             'director.ka' => "required|regex:/^[ა-ჰ\s]+$/",
-            'description.en' => "required|regex:/^[A-Za-z0-9 _.,!']+$/",
-            'description.ka' => "required|regex:/^[ა-ჰ _.,!']+$/",
+            'description.en' => "required|regex:/^[A-Za-z0-9 ,!'\s]+$/",
+            'description.ka' => "required|regex:/^[ა-ჰ0-9 ,!'\s]+$/",
             'image'=> "required|image",
             'year' => "required",
             'genres' => 'required|array',

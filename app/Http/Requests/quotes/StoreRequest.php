@@ -11,8 +11,8 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'quote.en' => "required|regex:/^[A-Za-z\s]+$/",
-            'quote.ka' => "required|regex:/^[ა-ჰ\s]+$/",
+            'quote.en' => "required|regex:/^[A-Za-z0-9 ,!'\s]+$/",
+            'quote.ka' => "required|regex:/^[ა-ჰ0-9 ,!'\s]+$/",
             'image'=> "required|image",
             'movie_id' => 'required|exists:movies,id',
         ];
