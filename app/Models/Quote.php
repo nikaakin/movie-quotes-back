@@ -32,8 +32,11 @@ class Quote extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeSearch($query, string $searchQuery)
+    public function scopeSearch($query, string|null $searchQuery)
     {
+        if($searchQuery == '' || $searchQuery == null) {
+            return $query;
+        }
 
         if(str_starts_with($searchQuery, '#')) {
             $searchQuery = str_replace('#', '', $searchQuery);
@@ -46,7 +49,7 @@ class Quote extends Model
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
-            }])->get();
+            }]);
         }
 
         if(str_starts_with($searchQuery, '@')) {
@@ -62,7 +65,7 @@ class Quote extends Model
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
-            }])->get();
+            }]);
         }
     }
 }

@@ -12,14 +12,15 @@ class QuoteController extends Controller
 {
     public function index(int $skip): JsonResponse
     {
-        $quotes = Quote::withCount(['notifications as likes' => function ($notification) {
+        $quoteQuery = Quote::search(request()->query('search'));
+        $quotes = $quoteQuery->withCount(['notifications as likes' => function ($notification) {
             $notification->where('isLike', 1);
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
         }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
             $notification->where('comment', '!=', 'null');
         }])->latest()->get()->skip($skip*5)->take(5)->values();
-        $has_more_pages = Quote::count() > ($skip + 1) * 5;
+        $has_more_pages = $quoteQuery->count() > ($skip + 1) * 5;
 
         return response()->json([
             'quotes' => $quotes,
@@ -84,7 +85,7 @@ class QuoteController extends Controller
 
     public function search(): JsonResponse
     {
-        $quotes = Quote::search(request()->query('search'));
+        $quotes = Quote::search(request()->query('search'))->get();
 
         return response()->json([
             'quotes' =>  $quotes,
