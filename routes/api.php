@@ -49,6 +49,7 @@ Route::group(['middleware' =>'auth:sanctum'], function () {
 
     Route::group(['controller' => QuoteController::class,'prefix' => 'quotes'], function () {
         Route::get('/search', 'search')->name('search');
+        Route::get('/show/{quote}', 'show')->name('quotes.show');
         Route::post('/store', 'store')->name('quotes.store');
         Route::patch('/update/{current_quote}', 'update')->name('quotes.update');
         Route::delete('/destroy/{current_quote}', 'destroy')->name('quotes.destroy');

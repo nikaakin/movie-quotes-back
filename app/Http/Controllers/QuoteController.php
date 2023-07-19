@@ -28,6 +28,21 @@ class QuoteController extends Controller
         ], 200);
     }
 
+    public function show(int $quoteId): JsonResponse
+    {
+        $quote = Quote::where('id', $quoteId)->withCount(['notifications as likes' => function ($notification) {
+            $notification->where('isLike', 1);
+        }, 'notifications as current_user_likes' => function ($notification) {
+            $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
+        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
+            $notification->where('comment', '!=', 'null');
+        }])->firstOrFail();
+
+        return response()->json([
+            'quote' => $quote,
+        ], 200);
+    }
+
     public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
