@@ -53,7 +53,7 @@ class AuthController extends Controller
                 $newEmail = $data['newEmail'];
                 unset($data['newEmail']);
                 $locale = app()->getLocale();
-                Mail::to($email)->send(new ResetMail(
+                Mail::to($newEmail)->send(new ResetMail(
                     __('mail.greeting', ["name"=> $user->username]),
                     __('mail.reset_email_update_hint'),
                     __('mail.reset_email_update_button'),
