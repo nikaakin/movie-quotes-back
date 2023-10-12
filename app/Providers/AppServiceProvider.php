@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,19 +23,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(ResponseFactory $response): void
     {
+
+        if($this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
+
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             $signiture = explode('?', $url)[1] ?? '';
-            $url = env("FRONTEND_URL") . "/api/email/verify/" . $notifiable->getKey() . "/" . sha1($notifiable->getEmailForVerification()). '/' . app()->getLocale().'?' . $signiture;
+            $url = env("FRONTEND_URL") . "/api/email/verify/" . $notifiable->getKey() . "/" . sha1($notifiable->getEmailForVerification()) . '/' . app()->getLocale() . '?' . $signiture;
             return (new MailMessage())->view(
                 'auth.feedback',
                 [
-            'greeting' => __('mail.greeting', ["name"=> auth()->user()->username]),
+            'greeting' => __('mail.greeting', ["name" => auth()->user()->username]),
             'thank_you' => __('mail.thank_you'),
             'buttonText' => __('mail.verify'),
             'hint' => __('mail.hint'),
             'any_problems' => __('mail.any_problems'),
             'regards' => __('mail.regards'),
-            'url'=> $url
+            'url' => $url
             ]
             );
         });
