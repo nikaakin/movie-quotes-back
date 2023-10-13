@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Admin;
 use App\Models\Genre;
 use App\Models\Movie;
 use App\Models\Notification;
 use App\Models\Quote;
 use App\Models\User;
+use Database\Factories\AdminFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,19 +24,21 @@ class DatabaseSeeder extends Seeder
         });
 
         User::factory()->create([
-                    'username' => 'nika',
-                    'email' => 'nika@nika.com',
-                    'password'=> bcrypt('nikanika'),
-                ]);
+            'username' => 'nika',
+            'email' => 'nika@nika.com',
+            'password' => env('ADMIN_PASSWORD'),
+        ]);
+
+        Admin::factory()->create();
 
         Movie::factory(20)->create();
         Quote::factory(20)->create();
         Notification::factory(10)->create([
-            'isLike'=> false
+            'isLike' => false
         ]);
         Notification::factory(10)->create([
-            'comment'=> null,
-            'isLike'=> true
+            'comment' => null,
+            'isLike' => true
         ]);
 
         Movie::all()->each(function ($movie) {

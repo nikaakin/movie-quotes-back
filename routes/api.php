@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\MigrateController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuoteController;
@@ -37,7 +38,7 @@ Route::group(['controller' => AuthController::class], function () {
     });
 });
 
-Route::group(['middleware' =>'auth:sanctum'], function () {
+Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'movies','controller' => MovieController::class], function () {
         Route::get('/', 'index')->name('movies.index');
         Route::get('/{movieId}', 'show')->name('movies.show');
@@ -66,3 +67,5 @@ Route::group(['middleware' =>'auth:sanctum'], function () {
 });
 
 Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
+
+Route::get('/migrate', [MigrateController::class, 'index'])->middleware(['auth:sanctum','admin'])->name('migrate.index');
