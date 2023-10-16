@@ -31,21 +31,21 @@ class DatabaseSeeder extends Seeder
 
         Admin::factory()->create();
 
-        Movie::factory(20)->create();
-        Quote::factory(20)->create();
-        Notification::factory(10)->create([
-            'isLike' => false
-        ]);
-        Notification::factory(10)->create([
-            'comment' => null,
-            'isLike' => true
-        ]);
+        // Movie::factory(20)->create();
+        // Quote::factory(20)->create();
+        // Notification::factory(10)->create([
+        //     'isLike' => false
+        // ]);
+        // Notification::factory(10)->create([
+        //     'comment' => null,
+        //     'isLike' => true
+        // ]);
 
-        Movie::all()->each(function ($movie) {
-            $movie->genres()->attach(
-                Genre::inRandomOrder()->first()
-            );
-        });
+        // Movie::all()->each(function ($movie) {
+        //     $movie->genres()->attach(
+        //         Genre::inRandomOrder()->first()
+        //     );
+        // });
 
     }
 }
