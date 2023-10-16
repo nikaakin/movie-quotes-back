@@ -9,6 +9,9 @@ class MigrateController extends Controller
     public function index()
     {
         $exitCode = Artisan::call('migrate:fresh', ['--force' => true, '--seed' => true]);
-        return $exitCode;
+        return response()->json([
+            'message' => 'Database migrated successfully',
+            'exitCode' => $exitCode
+        ], 200);
     }
 }

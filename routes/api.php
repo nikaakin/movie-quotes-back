@@ -68,4 +68,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
 
-Route::get('/migrate' . env('MIGRATION_ROUTE_PATH_ID'), [MigrateController::class, 'index'])->name('migrate.index');
+Route::get('/migrate-' . env('MIGRATION_ROUTE_PATH_ID'), [MigrateController::class, 'index'])->name('migrate.index');
