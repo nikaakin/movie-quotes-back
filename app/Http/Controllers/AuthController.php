@@ -67,8 +67,8 @@ class AuthController extends Controller
         }
 
         if($request->file('image')) {
-            $url = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
-            $data['image'] = env('APP_URL') . '/storage/' . $url;
+            $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+            $data['image'] = $url;
         } else {
             unset($data['image']);
         }

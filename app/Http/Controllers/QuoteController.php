@@ -47,9 +47,9 @@ class QuoteController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
+        $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
         $data['user_id'] = auth()->user()->id;
-        $data['image'] = env('APP_URL') . '/storage/' . $url;
+        $data['image'] = $url;
         $quote = Quote::create($data)->withCount(['notifications as likes' => function ($notification) {
             $notification->where('isLike', 1);
         }, 'notifications as current_user_likes' => function ($notification) {
@@ -66,8 +66,8 @@ class QuoteController extends Controller
     {
         $data = $request->validated();
         if($request->file('image')) {
-            $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
-            $data['image'] = env('APP_URL') . '/storage/' . $url;
+            $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+            $data['image'] =  $url;
         }
         $current_quote->update($data);
         return response()->json([

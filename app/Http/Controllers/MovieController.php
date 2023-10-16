@@ -49,8 +49,8 @@ class MovieController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = auth()->user()->id;
-        $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
-        $data['image'] = env('APP_URL') . '/storage/' . $url;
+        $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+        $data['image'] =  $url;
         $movie = Movie::create($data);
         $movie->genres()->attach($data['genres']);
         return response()->json([
@@ -62,8 +62,8 @@ class MovieController extends Controller
     {
         $data = $request->validated();
         if($request->file('image')) {
-            $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
-            $data['image'] = env('APP_URL') . '/storage/' . $url;
+            $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+            $data['image'] = $url;
         }
         $data['user_id'] = auth()->user()->id;
         $movie->update($data);
