@@ -17,9 +17,9 @@ class QuoteController extends Controller
             $notification->where('isLike', 1);
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
-        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
+        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications' => function ($notification) {
             $notification->where('comment', '!=', 'null');
-        }])->latest()->get()->skip($skip*5)->take(5)->values();
+        }])->latest()->get()->skip($skip * 5)->take(5)->values();
         $has_more_pages = $quoteQuery->count() > ($skip + 1) * 5;
 
         return response()->json([
@@ -35,7 +35,7 @@ class QuoteController extends Controller
             $notification->where('isLike', 1);
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
-        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
+        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications' => function ($notification) {
             $notification->where('comment', '!=', 'null');
         }])->firstOrFail();
 
@@ -47,14 +47,14 @@ class QuoteController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $url = $request->file('image')->store('quotes', 'public');
+        $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
         $data['user_id'] = auth()->user()->id;
-        $data['image'] = env('APP_URL') .'/storage/'. $url;
+        $data['image'] = env('APP_URL') . '/storage/' . $url;
         $quote = Quote::create($data)->withCount(['notifications as likes' => function ($notification) {
             $notification->where('isLike', 1);
         }, 'notifications as current_user_likes' => function ($notification) {
             $notification->where('isLike', 1)->where('user_id', auth()->user()->id);
-        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications'=> function ($notification) {
+        }])->with(['notifications.user', 'user', "movie:id,year,title", 'notifications' => function ($notification) {
             $notification->where('comment', '!=', 'null');
         }])->latest()->first();
         return response()->json([
@@ -66,8 +66,8 @@ class QuoteController extends Controller
     {
         $data = $request->validated();
         if($request->file('image')) {
-            $url = $request->file('image')->store('movies', 'public');
-            $data['image'] = env('APP_URL') .'/storage/'. $url;
+            $url =  Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
+            $data['image'] = env('APP_URL') . '/storage/' . $url;
         }
         $current_quote->update($data);
         return response()->json([

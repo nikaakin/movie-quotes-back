@@ -10,6 +10,7 @@ use App\Http\Requests\auth\ResetRequest;
 use App\Http\Requests\auth\UpdateRequest;
 use App\Mail\ResetMail;
 use App\Models\User;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -38,8 +39,8 @@ class AuthController extends Controller
         $email = $data['email'];
 
         if(isset($data['verifiedEmail'])) {
-            $user = User::firstWhere('email', $email)->update(['email'=> $data['verifiedEmail']]);
-            return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
+            $user = User::firstWhere('email', $email)->update(['email' => $data['verifiedEmail']]);
+            return  response()->json(['message' => 'User updated successfully', "user" => $user], 201);
         }
 
         if($data['google_id']) {
@@ -54,25 +55,25 @@ class AuthController extends Controller
                 unset($data['newEmail']);
                 $locale = app()->getLocale();
                 Mail::to($newEmail)->send(new ResetMail(
-                    __('mail.greeting', ["name"=> $user->username]),
+                    __('mail.greeting', ["name" => $user->username]),
                     __('mail.reset_email_update_hint'),
                     __('mail.reset_email_update_button'),
                     __('mail.hint'),
                     __('mail.any_problems'),
                     __('mail.regards'),
-                    env('FRONTEND_URL') ."/$locale/news-feed/profile/?email=$email&newEmail=$newEmail",
+                    env('FRONTEND_URL') . "/$locale/news-feed/profile/?email=$email&newEmail=$newEmail",
                 ));
             }
         }
 
         if($request->file('image')) {
-            $url = $request->file('image')->store('avatars', 'public');
-            $data['image'] = env('APP_URL') .'/storage/'. $url;
+            $url = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
+            $data['image'] = env('APP_URL') . '/storage/' . $url;
         } else {
             unset($data['image']);
         }
-        $user = User::updateOrCreate(['email'=> $email], $data);
-        return  response()->json(['message' => 'User updated successfully', "user"=> $user], 201);
+        $user = User::updateOrCreate(['email' => $email], $data);
+        return  response()->json(['message' => 'User updated successfully', "user" => $user], 201);
     }
 
 
@@ -97,7 +98,7 @@ class AuthController extends Controller
                 auth()->user()->sendEmailVerificationNotification();
                 return response()->json(['email_not_verified' => 'Please verify your email'], 401);
             }
-            return response()->json(['message' => 'User logged in successfully', "user"=> auth()->user(), ], 200);
+            return response()->json(['message' => 'User logged in successfully', "user" => auth()->user(), ], 200);
         }
         return response()->json(['password' => __('auth.failed')], 401);
     }
@@ -116,13 +117,13 @@ class AuthController extends Controller
         $email  = $data['email'];
         $user = User::firstWhere('email', $email);
         if($user->google_id) {
-            return response()->json(['details'=>['email' => __('validation.google_email')]], 401);
+            return response()->json(['details' => ['email' => __('validation.google_email')]], 401);
         }
         $token = Str::random(64);
 
 
         DB::table('password_reset_tokens')->updateOrInsert(
-            ['email'=> $data['email']],
+            ['email' => $data['email']],
             [
                 'token'      => $token,
                 'created_at' => now(),
@@ -132,13 +133,13 @@ class AuthController extends Controller
         Mail::to($user)
         ->send(
             new ResetMail(
-                __('mail.greeting', ["name"=> $user->username]),
+                __('mail.greeting', ["name" => $user->username]),
                 __('mail.reset_password_hint'),
                 __('mail.reset_password_button'),
                 __('mail.hint'),
                 __('mail.any_problems'),
                 __('mail.regards'),
-                env('FRONTEND_URL') ."/$locale/?token=$token&email=$email",
+                env('FRONTEND_URL') . "/$locale/?token=$token&email=$email",
             )
         );
 
@@ -150,7 +151,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $email = $data['email'];
-        $password_reset_token = DB::table('password_reset_tokens')->where(['email'=> $email])->first();
+        $password_reset_token = DB::table('password_reset_tokens')->where(['email' => $email])->first();
 
         if(!$password_reset_token) {
             return response()->json(['message' => 'Invalid token'], 401);
@@ -160,7 +161,7 @@ class AuthController extends Controller
         }
 
         User::where(['email' => $email])->update([
-            'password'=> bcrypt($data['password']),
+            'password' => bcrypt($data['password']),
         ]);
 
         DB::table('password_reset_tokens')->where(['email' => $email])->delete();
@@ -176,7 +177,7 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-        return response()->json(['is_authenticated' => true, 'user'=> $user], 200);
+        return response()->json(['is_authenticated' => true, 'user' => $user], 200);
     }
 
 
@@ -190,15 +191,15 @@ class AuthController extends Controller
         $googleUser =  Socialite::driver('google')->stateless()->user();
         $google_id = $googleUser->getId();
 
-        $user =User::where(['username'=> $googleUser->name ?? $googleUser->getNickname()])->first();
+        $user = User::where(['username' => $googleUser->name ?? $googleUser->getNickname()])->first();
 
         if($user && $user->google_id !== $google_id) {
-            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.username')])]], 401);
+            return response()->json(['details' => ['username' => __('validation.exists', ['attribute' => __('field_names.username')])]], 401);
         }
-        $user =User::where(['email'=> $googleUser->getEmail()])->first();
+        $user = User::where(['email' => $googleUser->getEmail()])->first();
 
         if($user && $user->google_id !== $google_id) {
-            return response()->json(['details'=>['username' => __('validation.exists', ['attribute'=> __('field_names.email')])]], 401);
+            return response()->json(['details' => ['username' => __('validation.exists', ['attribute' => __('field_names.email')])]], 401);
         }
         if(!$user) {
             $user = User::create(
