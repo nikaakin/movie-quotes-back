@@ -50,11 +50,12 @@ class MovieController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->user()->id;
         $url = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
-        $data['image'] =  $url;
+        $data['image'] = $url;
         $movie = Movie::create($data);
         $movie->genres()->attach($data['genres']);
         return response()->json([
             'movie' => $movie,
+            'url' => $url
         ], 201);
     }
 
