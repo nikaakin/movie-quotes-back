@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\movies;
 
-use App\Rules\UniqueJson;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -12,13 +11,13 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title.en' => ["required" ,"regex:/^[A-Za-z0-9 ,!'\s]+$/",  new UniqueJson('en', 'movies', 'title') ],
-            'title.ka' => ["required" ,"regex:/^[ა-ჰ0-9 ,!'\s]+$/", new UniqueJson('ka', 'movies', 'title')],
+            'title.en' => ["required" ,"regex:/^[A-Za-z0-9 ,!'\s]+$/" ],
+            'title.ka' => ["required" ,"regex:/^[ა-ჰ0-9 ,!'\s]+$/"],
             'director.en' => "required|regex:/^[A-Za-z\s]+$/",
             'director.ka' => "required|regex:/^[ა-ჰ\s]+$/",
             'description.en' => "required|regex:/^[A-Za-z0-9 ,!'\s]+$/",
             'description.ka' => "required|regex:/^[ა-ჰ0-9 ,!'\s]+$/",
-            'image'=> "required|image",
+            'image' => "required|image",
             'year' => "required",
             'genres' => 'required|array',
         ];
@@ -27,7 +26,7 @@ class StoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.en.required' =>__('validation.required', ['attribute' => __('field_names.title')]),
+            'title.en.required' => __('validation.required', ['attribute' => __('field_names.title')]),
             'title.en.unique' => __('validation.unique', ['attribute' => __('field_names.title')]),
             'title.ka.required' => __('validation.required', ['attribute' => __('field_names.title')]),
             'title.ka.unique' => __('validation.unique', ['attribute' => __('field_names.title')]),

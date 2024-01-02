@@ -54,8 +54,7 @@ class MovieController extends Controller
         $movie = Movie::create($data);
         $movie->genres()->attach($data['genres']);
         return response()->json([
-            'movie' => $movie,
-            'url' => $url
+            'movie' => $data,
         ], 201);
     }
 
