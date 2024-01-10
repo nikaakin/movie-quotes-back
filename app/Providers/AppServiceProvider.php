@@ -30,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
 
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             $signiture = explode('?', $url)[1] ?? '';
+            $parts = explode('&', $signiture);
+            $expires = explode('=', $parts[0])[1];
+            $signiture = 'expires=' . $expires . '000000' . '&signature=' . explode('=', $parts[1])[1];
             $url = env("FRONTEND_URL") . "/api/email/verify/" . $notifiable->getKey() . "/" . sha1($notifiable->getEmailForVerification()) . '/' . app()->getLocale() . '?' . $signiture;
             return (new MailMessage())->view(
                 'auth.feedback',
