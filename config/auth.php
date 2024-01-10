@@ -113,7 +113,7 @@ return [
     'password_timeout' => 10800,
 
     'verification' => [
-        'expire' => '14000',
+        'expire' => '14400000',
         'enabled' => true,
         'driver' => 'sanctum',
     ],
