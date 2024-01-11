@@ -26,13 +26,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     ];
 
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-        "email_verified_at",
-        "created_at",
-        "updated_at",
-    ];
+    // protected $hidden = [
+    //     'password',
+    //     'remember_token',
+    //     "email_verified_at",
+    //     "created_at",
+    //     "updated_at",
+    // ];
 
 
     protected $casts = [

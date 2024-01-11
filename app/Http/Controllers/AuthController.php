@@ -100,7 +100,7 @@ class AuthController extends Controller
             }
             return response()->json(['message' => 'User logged in successfully', "user" => auth()->user(), ], 200);
         }
-        return response()->json(['password' => __('auth.failed')], 401);
+        return response()->json(['password' => __('auth.failed'), 'user' => auth()->user()], 401);
     }
 
     public function logout(): JsonResponse
