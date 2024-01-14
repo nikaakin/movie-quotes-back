@@ -41,11 +41,11 @@ class Quote extends Model
         if(str_starts_with($searchQuery, '#')) {
             $searchQuery = str_replace('#', '', $searchQuery);
             return $query->where(function ($query) use ($searchQuery) {
-                $query->WhereRaw('LOWER(JSON_EXTRACT(quote, "$.en")) like ?', ["%$searchQuery%"])
-                ->orWhereRaw('LOWER(JSON_EXTRACT(quote, "$.ka")) like ?', ["%$searchQuery%"]);
-            })->with(['user','notifications.user','notifications'=> function ($notification) {
+                $query->WhereRaw("quote->>'en' ilike ?", ["%$searchQuery%"])
+                ->orWhereRaw("quote->>'ka' ilike ?", ["%$searchQuery%"]);
+            })->with(['user','notifications.user','notifications' => function ($notification) {
                 $notification->where('comment', '!=', 'null');
-            }])->withCount(['notifications as likes'=> function ($notification) {
+            }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);
@@ -56,12 +56,12 @@ class Quote extends Model
             $searchQuery = str_replace('@', '', $searchQuery);
             return $query->whereHas('movie', function ($q) use ($searchQuery) {
                 return $q->where(function ($q) use ($searchQuery) {
-                    $q->WhereRaw('LOWER(JSON_EXTRACT(title, "$.en")) like ?', ["%$searchQuery%"])
-                        ->orWhereRaw('LOWER(JSON_EXTRACT(title, "$.ka")) like ?', ["%$searchQuery%"]);
+                    $q->WhereRaw("title->>'en' ilike ?", ["%$searchQuery%"])
+                        ->orWhereRaw("title->>'ka' ilike ?", ["%$searchQuery%"]);
                 });
-            })->with(['user','notifications.user', 'notifications'=> function ($notification) {
+            })->with(['user','notifications.user', 'notifications' => function ($notification) {
                 $notification->where('comment', "!=", "null");
-            }])->withCount(['notifications as likes'=> function ($notification) {
+            }])->withCount(['notifications as likes' => function ($notification) {
                 $notification->where('isLike', 1);
             }, 'notifications as current_user_likes' => function ($notification) {
                 $notification->where('isLike', 1)->Where('user_id', auth()->user()->id);

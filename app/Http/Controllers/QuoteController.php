@@ -83,12 +83,4 @@ class QuoteController extends Controller
         ], 204);
     }
 
-    public function search(): JsonResponse
-    {
-        $quotes = Quote::search(request()->query('search'))->get();
-
-        return response()->json([
-            'quotes' =>  $quotes,
-        ], 200);
-    }
 }
